@@ -109,6 +109,7 @@
         summaryReport = null;
       }
       renderSummary();
+      if (summaryReport) await loadSummaryImages();
     } catch (e) {
       body.innerHTML = '<p class="text-body-md font-body-md text-error">โหลดข้อมูลล้มเหลว: ' + DR.escapeHtml(e.message) + '</p>';
       DR.toast("ไม่สามารถโหลดข้อมูลได้: " + e.message, "error");
@@ -128,22 +129,68 @@
     }
 
     const r = summaryReport;
+    const items = r.items || [];
     const imgCount = (r.images || []).length;
-    body.className = "flex flex-col gap-3";
+    body.className = "flex flex-col gap-3 w-full";
     body.innerHTML =
-      '<div class="w-full grid grid-cols-1 sm:grid-cols-2 gap-3">' +
+      '<div class="w-full grid grid-cols-2 sm:grid-cols-4 gap-3">' +
       statRow("work", "กลุ่มงาน", r.workGroup || "—") +
       statRow("location_on", "ไซต์งาน", r.site || "—") +
       statRow("schedule", "เวลาเลิกงาน", r.endTime || "—") +
-      statRow("fact_check", "จำนวนรายการ", (r.items || []).length + " รายการ") +
-      (imgCount ? statRow("photo_library", "รูปภาพ", imgCount + " รูป") : "") +
+      statRow("fact_check", "รายการ", items.length + " รายการ") +
       "</div>" +
+
+      '<div class="w-full bg-white border border-outline-variant rounded-xl overflow-hidden">' +
+      '<div class="overflow-x-auto w-full">' +
+      '<table class="w-full text-left border-collapse">' +
+      '<thead class="bg-surface-container-low border-b border-outline-variant">' +
+      '<tr>' +
+      '<th class="p-3 text-label-md font-label-md text-on-surface-variant w-12 text-center">ลำดับ</th>' +
+      '<th class="p-3 text-label-md font-label-md text-on-surface-variant min-w-[200px]">รายละเอียด</th>' +
+      '<th class="p-3 text-label-md font-label-md text-on-surface-variant min-w-[120px]">หมายเหตุ</th>' +
+      "</tr></thead>" +
+      '<tbody class="text-data-tabular font-data-tabular divide-y divide-outline-variant">' +
+      (items.length ? items.map(function (it, i) {
+        return "<tr>" +
+          '<td class="p-3 text-center">' + (i + 1) + "</td>" +
+          '<td class="p-3">' + DR.escapeHtml(it.detail) + "</td>" +
+          '<td class="p-3">' + (it.note ? DR.escapeHtml(it.note) : "—") + "</td></tr>";
+      }).join("") :
+        '<tr><td colspan="3" class="p-3 text-center text-on-surface-variant">ไม่มีรายการ</td></tr>') +
+      "</tbody></table></div></div>" +
+
+      '<div id="sum-images" class="w-full flex flex-col gap-3"></div>' +
+
       '<div class="w-full flex flex-col sm:flex-row gap-3 justify-end mt-2">' +
       '<a href="create.html?date=' + selectedDate + '" class="inline-flex items-center justify-center gap-2 px-6 py-3 border-2 border-primary text-primary rounded-full hover:bg-primary/5 transition-colors text-label-md font-label-md">' +
       '<span class="material-symbols-outlined text-sm">edit</span> แก้ไขรายงาน</a>' +
       '<a href="preview.html?date=' + selectedDate + '" class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary text-on-primary rounded-full hover:bg-primary-container transition-colors shadow-sm text-label-md font-label-md">' +
       '<span class="material-symbols-outlined text-sm">description</span> ดูและส่งออกรายงาน</a>' +
       "</div>";
+
+    if (!imgCount) {
+      $("#sum-images").innerHTML = "";
+    }
+  }
+
+  async function loadSummaryImages() {
+    const list = $("#sum-images");
+    if (!list || !summaryReport) return;
+    const recs = (summaryReport.images || []).slice();
+    if (!recs.length) { list.innerHTML = ""; return; }
+    list.innerHTML = '<div class="spinner"></div>';
+    let html = "";
+    for (let i = 0; i < recs.length; i++) {
+      const rec = recs[i];
+      try {
+        const url = await DR.API.getImage(rec.fileId);
+        html += '<div class="w-full overflow-hidden rounded-lg border border-outline-variant bg-surface-container-low">' +
+          '<img src="' + url + '" class="w-full h-auto block" alt="รูป ' + (i + 1) + '" />' +
+          (rec.caption ? '<div class="p-2 text-label-md font-label-md text-on-surface-variant">' + DR.escapeHtml(rec.caption) + "</div>" : "") +
+          "</div>";
+      } catch (e) { /* skip broken image */ }
+    }
+    list.innerHTML = html || '<p class="text-label-md font-label-md text-on-surface-variant">โหลดรูปไม่สำเร็จ</p>';
   }
 
   function statRow(icon, label, value) {

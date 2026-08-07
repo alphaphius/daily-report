@@ -72,7 +72,10 @@
   async function loadLogo() {
     if (logoDataURL) return logoDataURL;
     try {
-      const res = await fetch(CONFIG.LOGO_URL);
+      const res = await Promise.race([
+        fetch(CONFIG.LOGO_URL),
+        new Promise((_, reject) => setTimeout(() => reject(new Error("logo timeout")), 6000))
+      ]);
       const blob = await res.blob();
       logoDataURL = await new Promise((resolve) => {
         const r = new FileReader();

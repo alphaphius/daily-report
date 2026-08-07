@@ -91,7 +91,7 @@ body {
 .report-doc .font-garamond { font-family: 'EB Garamond', serif; }
 
 /* Hide scrollbar helper for doc wrapper on mobile */
-.doc-scale-wrap { overflow-x: auto; }
+.doc-scale-wrap { overflow: hidden; }
 
 /* ============================================================
    Bottom navigation (Material 3 style, stable equal-width cells)
