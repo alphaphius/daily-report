@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#faf5ee" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="DailyReport" />
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+  <title>สร้างรายงาน - DailyReport</title>
+
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script>
+    tailwind.config = {darkMode: "class", theme: {extend: {
+      colors: {"on-primary":"#ffffff","surface-tint":"#c2652a","outline-variant":"#d8d0c8","surface-container":"#f2ece4","surface-variant":"#ece6dc",background:"#faf5ee","on-error-container":"#7a1a10","on-secondary-fixed-variant":"#504840","error-container":"#fce4e0","primary-fixed-dim":"#f0a878","inverse-primary":"#f0a878","on-secondary-fixed":"#2a2420","surface-container-low":"#f6f0e8",tertiary:"#8c3c3c","primary-fixed":"#fbe8d8","surface-dim":"#dcd6cc","secondary-fixed-dim":"#cec6be","secondary-fixed":"#eae2da","inverse-surface":"#3a302a","on-primary-fixed-variant":"#8a4518","on-primary-fixed":"#401a08","on-tertiary-container":"#3a2020",error:"#c0392b","on-surface":"#3a302a","surface-container-lowest":"#ffffff","tertiary-fixed":"#fce0e0","surface-bright":"#faf5ee","on-surface-variant":"#605850","on-background":"#3a302a","on-primary-container":"#fbe8d8",outline:"#9a9088",secondary:"#78706a","primary-container":"#e08850","on-tertiary-fixed":"#2e1515","surface-container-high":"#ece6dc","tertiary-fixed-dim":"#e8a0a0","surface-container-highest":"#e6e0d6","on-tertiary":"#ffffff",surface:"#faf5ee",error:"#c0392b","secondary-container":"#eae2da","on-tertiary-fixed-variant":"#6e3030","on-secondary":"#ffffff","inverse-on-surface":"#faf5ee",primary:"#c2652a","on-secondary-container":"#605850"},
+      borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"},
+      spacing: {"margin-desktop":"2rem","touch-target-min":"48px","margin-mobile":"1rem","stack-md":"1rem","stack-lg":"1.5rem",gutter:"1rem","stack-sm":"0.5rem"},
+      fontFamily: {"label-md":["Hanken Grotesk"],"body-md":["Hanken Grotesk"],"headline-lg":["Hanken Grotesk"],"data-tabular":["Hanken Grotesk"],"body-lg":["Hanken Grotesk"],"headline-lg-mobile":["Hanken Grotesk"],"headline-md":["Hanken Grotesk"],headline:["Eb Garamond"],display:["Eb Garamond"],body:["Manrope"],label:["Manrope"]},
+      fontSize: {"label-md":["14px",{lineHeight:"20px",letterSpacing:"0.05em",fontWeight:"600"}],"body-md":["16px",{lineHeight:"24px",fontWeight:"400"}],"headline-lg":["32px",{lineHeight:"40px",letterSpacing:"-0.02em",fontWeight:"700"}],"data-tabular":["14px",{lineHeight:"20px",fontWeight:"500"}],"body-lg":["18px",{lineHeight:"28px",fontWeight:"400"}],"headline-lg-mobile":["24px",{lineHeight:"32px",fontWeight:"700"}],"headline-md":["20px",{lineHeight:"28px",fontWeight:"600"}]}
+    }}}
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Eb+Garamond:wght@400;500;700&family=Manrope:wght@400;500;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./css/app.css" />
+</head>
+<body class="bg-background text-on-background min-h-screen pb-28 md:pb-8">
+  <!-- TopAppBar -->
+  <header class="bg-surface border-b border-outline-variant flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop h-touch-target-min sticky top-0 z-40">
+    <div class="flex items-center gap-2">
+      <span class="material-symbols-outlined text-primary">assignment_turned_in</span>
+      <h1 class="text-headline-md font-headline-md font-bold text-primary">DailyReport</h1>
+    </div>
+    <div class="w-8 h-8 rounded-full overflow-hidden bg-surface-container flex items-center justify-center">
+      <span class="material-symbols-outlined text-on-surface-variant">person</span>
+    </div>
+  </header>
+
+  <main class="max-w-screen-md mx-auto px-margin-mobile md:px-margin-desktop py-stack-lg">
+    <!-- Header -->
+    <div class="flex flex-col items-center mb-stack-lg">
+      <img id="app-logo" alt="Logo" class="w-20 h-20 mb-4 object-contain rounded-sm shadow-sm border border-outline-variant" src="icons/logo.png" />
+      <h2 class="text-headline-lg-mobile md:text-headline-lg font-headline-lg-mobile md:font-headline-lg text-primary text-center">สร้างรายงานประจำวัน</h2>
+      <div id="date-pill" class="mt-2 px-4 py-2 bg-secondary-fixed rounded-full inline-flex items-center gap-2 border border-secondary-fixed-dim">
+        <span class="material-symbols-outlined text-on-secondary-fixed text-sm">calendar_today</span>
+        <span class="text-label-md font-label-md text-on-secondary-fixed" id="date-pill-text">—</span>
+      </div>
+    </div>
+
+    <!-- Form Section -->
+    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-lg mb-stack-lg shadow-sm">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-stack-lg">
+        <div class="flex flex-col gap-1">
+          <label class="text-label-md font-label-md text-on-surface-variant" for="f-group">กลุ่มงาน</label>
+          <select id="f-group" class="w-full h-touch-target-min border-outline-variant rounded-lg bg-surface focus:border-primary focus:ring-1 focus:ring-primary text-body-md font-body-md px-3">
+            <option value="">เลือกกลุ่มงาน</option>
+          </select>
+        </div>
+        <div class="flex flex-col gap-1">
+          <label class="text-label-md font-label-md text-on-surface-variant" for="f-site">ไซต์งาน/สถานที่</label>
+          <select id="f-site" class="w-full h-touch-target-min border-outline-variant rounded-lg bg-surface focus:border-primary focus:ring-1 focus:ring-primary text-body-md font-body-md px-3">
+            <option value="">เลือกไซต์งาน</option>
+          </select>
+        </div>
+        <div class="flex flex-col gap-1 md:col-span-2">
+          <label class="text-label-md font-label-md text-on-surface-variant" for="f-endtime">เวลาเลิกงาน</label>
+          <select id="f-endtime" class="w-full h-touch-target-min border-outline-variant rounded-lg bg-surface focus:border-primary focus:ring-1 focus:ring-primary text-body-md font-body-md px-3">
+            <option value="">เลือกเวลาเลิกงาน</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Items Section -->
+    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-lg mb-stack-lg shadow-sm">
+      <h2 class="text-headline-md font-headline-md mb-stack-md text-primary">เพิ่มรายการงาน</h2>
+      <div class="grid grid-cols-1 gap-stack-md mb-stack-md">
+        <div class="flex flex-col gap-1">
+          <label class="text-label-md font-label-md text-on-surface-variant" for="i-detail">รายละเอียด</label>
+          <input id="i-detail" class="w-full h-touch-target-min border-outline-variant rounded-lg bg-surface focus:border-primary focus:ring-1 focus:ring-primary text-body-md font-body-md px-3" placeholder="ระบุรายละเอียดงาน..." type="text" />
+        </div>
+        <div class="flex flex-col gap-1">
+          <label class="text-label-md font-label-md text-on-surface-variant" for="i-note">หมายเหตุ</label>
+          <input id="i-note" class="w-full h-touch-target-min border-outline-variant rounded-lg bg-surface focus:border-primary focus:ring-1 focus:ring-primary text-body-md font-body-md px-3" placeholder="ระบุหมายเหตุ (ถ้ามี)..." type="text" />
+        </div>
+      </div>
+      <button id="btn-add-item" class="w-full md:w-auto h-touch-target-min bg-secondary-container hover:bg-secondary text-on-secondary-container font-label-md text-label-md rounded-lg px-6 flex items-center justify-center gap-2 transition-colors">
+        <span class="material-symbols-outlined">add</span>
+        เพิ่มรายการ
+      </button>
+    </div>
+
+    <!-- Items Table -->
+    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden mb-stack-lg shadow-sm">
+      <div class="overflow-x-auto w-full">
+        <table class="w-full text-left border-collapse">
+          <thead class="bg-surface-container-low border-b border-outline-variant">
+            <tr>
+              <th class="p-4 text-label-md font-label-md text-on-surface-variant whitespace-nowrap min-w-[200px]">รายละเอียด</th>
+              <th class="p-4 text-label-md font-label-md text-on-surface-variant whitespace-nowrap min-w-[150px]">หมายเหตุ</th>
+              <th class="p-4 text-label-md font-label-md text-on-surface-variant whitespace-nowrap w-24 text-center">จัดการ</th>
+            </tr>
+          </thead>
+          <tbody id="items-body" class="text-data-tabular font-data-tabular divide-y divide-outline-variant"></tbody>
+        </table>
+      </div>
+      <div class="p-4 border-t border-outline-variant bg-surface-container-low flex justify-between items-center">
+        <span id="items-count" class="text-label-md font-label-md text-on-surface-variant">รวม 0 รายการ</span>
+      </div>
+    </div>
+
+    <!-- Image Upload -->
+    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-lg mb-stack-lg shadow-sm">
+      <h2 class="text-headline-md font-headline-md mb-stack-md text-primary flex items-center gap-2">
+        <span class="material-symbols-outlined">photo_camera</span>แนบรูปถ่าย
+      </h2>
+      <div id="dropzone" class="border-2 border-dashed border-outline-variant rounded-lg p-8 flex flex-col items-center justify-center bg-surface-container-low cursor-pointer hover:bg-surface-container transition-colors mb-4">
+        <span class="material-symbols-outlined text-4xl text-outline mb-2">upload_file</span>
+        <p class="text-body-md font-body-md text-on-surface-variant mb-1">แตะเพื่ออัปโหลด หรือลากไฟล์มาวาง</p>
+        <p class="text-label-md font-label-md text-outline">รองรับ JPG, PNG, HEIC (อัปโหลดได้หลายรูป)</p>
+        <input id="file-input" type="file" accept="image/*" multiple class="hidden" />
+      </div>
+      <div id="img-grid" class="grid grid-cols-2 md:grid-cols-3 gap-4"></div>
+    </div>
+
+    <!-- Action -->
+    <div class="flex justify-end pt-4 pb-8 md:pb-4 border-t border-outline-variant">
+      <button id="btn-save" class="w-full md:w-auto h-touch-target-min bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md rounded-lg px-8 flex items-center justify-center gap-2 transition-colors shadow-sm">
+        <span class="material-symbols-outlined">save</span>
+        บันทึกรายงาน
+      </button>
+    </div>
+  </main>
+
+  <!-- BottomNavBar -->
+  <nav class="fixed bottom-0 left-0 right-0 bg-surface border-t border-outline-variant flex justify-around items-center h-16 md:hidden z-40">
+    <a href="index.html" class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-container-high scale-95 active:scale-90 transition-transform duration-150 w-full h-full rounded-lg">
+      <span class="material-symbols-outlined">dashboard</span>
+      <span class="text-[10px] font-label-md mt-1">หน้าหลัก</span>
+    </a>
+    <a href="create.html" class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-4 py-1 scale-95 active:scale-90 transition-transform duration-150 w-3/4 max-w-[110px] h-12 shadow-sm">
+      <span class="material-symbols-outlined filled">add_circle</span>
+      <span class="text-[10px] font-label-md mt-1 font-bold">เพิ่มรายงาน</span>
+    </a>
+    <a href="settings.html" class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-container-high scale-95 active:scale-90 transition-transform duration-150 w-full h-full rounded-lg">
+      <span class="material-symbols-outlined">settings</span>
+      <span class="text-[10px] font-label-md mt-1">ตั้งค่า</span>
+    </a>
+  </nav>
+
+  <script src="./config.js"></script>
+  <script src="./js/app.js"></script>
+  <script src="./js/create.js"></script>
+</body>
+</html>

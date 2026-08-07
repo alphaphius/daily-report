@@ -1,0 +1,961 @@
+<!-- ตัวอย่างและส่งออกรายงาน -->
+<!DOCTYPE html>
+
+<html lang="th"><head>
+        <meta charset="utf-8" />
+        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+        <title>Report Preview and Export</title>
+        <script
+            src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+        <script
+            id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {"on-primary": "#ffffff", "surface-tint": "#c2652a", "outline-variant": "#d8d0c8", "surface-container": "#f2ece4", "surface-variant": "#ece6dc", background: "#faf5ee", "on-error-container": "#7a1a10", "on-secondary-fixed-variant": "#504840", "error-container": "#fce4e0", "primary-fixed-dim": "#f0a878", "inverse-primary": "#f0a878", "on-secondary-fixed": "#2a2420", "surface-container-low": "#f6f0e8", "tertiary-container": "#d47070", "primary-fixed": "#fbe8d8", "surface-dim": "#dcd6cc", "secondary-fixed-dim": "#cec6be", "secondary-fixed": "#eae2da", "inverse-surface": "#3a302a", "on-primary-fixed-variant": "#8a4518", "on-primary-fixed": "#401a08", "on-tertiary-container": "#3a2020", "on-error": "#ffffff", "on-surface": "#3a302a", "surface-container-lowest": "#ffffff", "tertiary-fixed": "#fce0e0", tertiary: "#8c3c3c", "surface-bright": "#faf5ee", "on-surface-variant": "#605850", "on-background": "#3a302a", "on-primary-container": "#fbe8d8", outline: "#9a9088", secondary: "#78706a", "primary-container": "#e08850", "on-tertiary-fixed": "#2e1515", "surface-container-high": "#ece6dc", "tertiary-fixed-dim": "#e8a0a0", "surface-container-highest": "#e6e0d6", "on-tertiary": "#ffffff", surface: "#faf5ee", error: "#c0392b", "secondary-container": "#eae2da", "on-tertiary-fixed-variant": "#6e3030", "on-secondary": "#ffffff", "inverse-on-surface": "#faf5ee", primary: "#c2652a", "on-secondary-container": "#605850"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}, spacing: {"margin-desktop": "2rem", "touch-target-min": "48px", "margin-mobile": "1rem", "stack-md": "1rem", "stack-lg": "1.5rem", gutter: "1rem", "stack-sm": "0.5rem"}, fontFamily: {"label-md": ["Hanken Grotesk"], "body-md": ["Hanken Grotesk"], "headline-lg": ["Hanken Grotesk"], "data-tabular": ["Hanken Grotesk"], "body-lg": ["Hanken Grotesk"], "headline-lg-mobile": ["Hanken Grotesk"], "headline-md": ["Hanken Grotesk"], headline: ["Eb Garamond"], display: ["Eb Garamond"], body: ["Manrope"], label: ["Manrope"]}, fontSize: {"label-md": ["14px", {lineHeight: "20px", letterSpacing: "0.05em", fontWeight: "600"}], "body-md": ["16px", {lineHeight: "24px", fontWeight: "400"}], "headline-lg": ["32px", {lineHeight: "40px", letterSpacing: "-0.02em", fontWeight: "700"}], "data-tabular": ["14px", {lineHeight: "20px", fontWeight: "500"}], "body-lg": ["18px", {lineHeight: "28px", fontWeight: "400"}], "headline-lg-mobile": ["24px", {lineHeight: "32px", fontWeight: "700"}], "headline-md": ["20px", {lineHeight: "28px", fontWeight: "600"}]}}}};</script>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Eb+Garamond:wght@400;500;700&amp;family=Manrope:wght@400;500;700&amp;display=swap"
+            rel="stylesheet" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+            rel="stylesheet" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+            rel="stylesheet" />
+        <style>
+        body { font-family: 'Hanken Grotesk', sans-serif; background-color: #f7f9fb; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+        <style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+    </head>
+    <body class="text-on-background min-h-screen pb-24 md:pb-0">
+        <!-- TopAppBar -->
+        <header
+            class="bg-surface border-b border-outline-variant flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop h-touch-target-min top-0 sticky z-40">
+            <div class="flex items-center gap-2">
+                <button
+                    class="h-10 w-10 flex items-center justify-center rounded-full hover:bg-surface-container transition-colors duration-200">
+                    <span class="material-symbols-outlined text-primary"
+                        data-icon="assignment_turned_in">assignment_turned_in</span>
+                </button>
+                <h1
+                    class="text-headline-md font-headline-md font-bold text-primary">DailyReport</h1>
+            </div>
+            <div class="flex items-center gap-4">
+                <h2
+                    class="text-headline-md font-headline-md font-bold text-on-surface">ตัวอย่างรายงาน</h2>
+                <div
+                    class="h-8 w-8 rounded-full bg-surface-container flex items-center justify-center">
+                    <span
+                        class="material-symbols-outlined text-on-surface-variant"
+                        data-icon="user_profile_avatar">user_profile_avatar</span>
+                </div>
+            </div>
+        </header>
+        <main
+            class="max-w-4xl mx-auto mt-stack-lg px-margin-mobile md:px-margin-desktop">
+            <!-- Document Container (A4 style) -->
+            <div
+                class="bg-white border border-outline-variant rounded-lg p-8 shadow-sm">
+                <!-- Document Header -->
+                <div
+                    class="flex flex-col md:flex-row justify-between items-start mb-8 gap-4 border-b border-outline-variant pb-6">
+                    <div class="flex items-center gap-4">
+                        <img alt="FieldOps Pro Logo"
+                            class="w-16 h-16 rounded-sm object-cover"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWAfP3Ldll-IrpcfSen-puj6FS6n24NmSJ7lJwWjQ4Sli_Qmkh9paURfOOWXlyynRIWCtbehVL1cFXkh5ffxAvgBRlHD2v13HB7OKj-VvKADfvOoZvzSVD2VxrDy5QFLpyjJVsT1QPnomkVtEVA41m74NJKWbhE59NOp2bRnty0kCBa8B7lhR7GAriiRp72YNUy6P2HnS7qhyKpT556RjtVrvXOLSxC4It2ucDKduWMNpKBBHaPuc" />
+                        <div>
+                            <h2
+                                class="text-headline-lg font-headline-lg text-primary">รายงานความคืบหน้าประจำวัน</h2>
+                            <p
+                                class="text-body-md font-body-md text-on-surface-variant mt-1">โครงการก่อสร้างอาคาร
+                                A - Phase 1</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div
+                            class="grid grid-cols-2 gap-x-4 gap-y-1 text-data-tabular font-data-tabular text-on-surface">
+                            <span
+                                class="text-on-surface-variant text-left">วันที่:</span>
+                            <span class="font-bold">24 ตุลาคม 2023</span>
+                            <span
+                                class="text-on-surface-variant text-left">ไซต์:</span>
+                            <span class="font-bold">BKK-North</span>
+                            <span
+                                class="text-on-surface-variant text-left">กลุ่มงาน:</span>
+                            <span class="font-bold">โครงสร้างหลัก</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Data Table -->
+                <div class="mb-8">
+                    <h3
+                        class="text-headline-md font-headline-md text-on-surface mb-4">รายการปฏิบัติงาน</h3>
+                    <div
+                        class="overflow-x-auto rounded-md border border-outline-variant">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr
+                                    class="bg-surface-container text-label-md font-label-md text-on-surface border-b border-outline-variant">
+                                    <th class="p-3">รหัสงาน</th>
+                                    <th class="p-3">รายละเอียด</th>
+                                    <th class="p-3">สถานะ</th>
+                                    <th class="p-3">ผู้รับผิดชอบ</th>
+                                </tr>
+                            </thead>
+                            <tbody
+                                class="text-data-tabular font-data-tabular text-on-surface">
+                                <tr class="border-b border-outline-variant">
+                                    <td class="p-3">STR-001</td>
+                                    <td class="p-3">เทคอนกรีตฐานราก F1</td>
+                                    <td class="p-3"><span
+                                            class="bg-secondary-fixed text-on-secondary-fixed px-2 py-1 rounded-sm text-xs">กำลังดำเนินการ</span></td>
+                                    <td class="p-3">สมชาย ม.</td>
+                                </tr>
+                                <tr
+                                    class="border-b border-outline-variant bg-surface-bright">
+                                    <td class="p-3">STR-002</td>
+                                    <td class="p-3">ผูกเหล็กคานชั้น 1</td>
+                                    <td class="p-3"><span
+                                            class="bg-primary-fixed text-on-primary-fixed px-2 py-1 rounded-sm text-xs">เสร็จสิ้น</span></td>
+                                    <td class="p-3">วิชัย น.</td>
+                                </tr>
+                                <tr class="border-b border-outline-variant">
+                                    <td class="p-3">STR-003</td>
+                                    <td class="p-3">ตรวจสอบคุณภาพวัสดุ</td>
+                                    <td class="p-3"><span
+                                            class="bg-surface-variant text-on-surface-variant px-2 py-1 rounded-sm text-xs">รอตรวจ</span></td>
+                                    <td class="p-3">ทีม QC</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- Image Gallery -->
+                <div>
+                    <h3
+                        class="text-headline-md font-headline-md text-on-surface mb-4">ภาพประกอบ</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="relative group">
+                            <div
+                                class="bg-cover bg-center w-full aspect-square rounded-md border border-outline-variant"
+                                data-alt="A construction worker in a hard hat inspecting a concrete foundation pour on a sunny day. The scene is brightly lit with high contrast shadows. The aesthetic is industrial, modern, and professional, reflecting field operations in a clear, documented style."
+                                style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBvjrA22ERLznl3MOWGZXtohJZ2EB3rD9tOZBnuXcYzE0UI2cnDuSfWvn0jAJ6jv82buRHRDbQUNBLus6wtNsVagOv9DzOJpCHaO4PgWBUz7F4UCywzUwKOd05xLWoBKX4x1WEx3XdbOZkReE0Mt1NdNZSshIxuGx3NjYU1ergP37wX-a-O2ZmHBqoptqj-6e45LfArbzHKnG3iSUnXTn18f36ayhQEMLCl33_pGcz5jaRPU-1APqM')"></div>
+                            <div
+                                class="absolute bottom-0 left-0 w-full bg-black/50 text-white p-2 text-xs font-data-tabular rounded-b-md">08:45
+                                AM - ฐานราก F1</div>
+                        </div>
+                        <div class="relative group">
+                            <div
+                                class="bg-cover bg-center w-full aspect-square rounded-md border border-outline-variant"
+                                data-alt="Close up of tied steel rebar for a building foundation, ready for concrete. The image is sharply focused on the metal textures against a light gray concrete background. The lighting is bright daylight, highlighting the structural integrity and industrial nature of the site."
+                                style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAtE9z7fIyhgPpb1ylvQCSPCJZh10FH7WSDTk4cX-tBQ0sz_ORm9-btQLfnpLBhZYdW1IN2J9CeLkgZ71BEWi2OJYwiFa4fX6ei49AznZdVS-4158hfdU41-qpl7q4SF7HGnA5LJyeYubvJZXQ4n8stuxaZ-dQ7Ze5l-sEpZdmMiyXKzZGfTvekzNSlsVuLf2al3H73cLSraFwkUB4ouL_wS_8-FkntK0KRvxU4s3lBc8ya6Coza8E')"></div>
+                            <div
+                                class="absolute bottom-0 left-0 w-full bg-black/50 text-white p-2 text-xs font-data-tabular rounded-b-md">10:30
+                                AM - เหล็กคาน</div>
+                        </div>
+                        <div class="relative group">
+                            <div
+                                class="bg-cover bg-center w-full aspect-square rounded-md border border-outline-variant"
+                                data-alt="A wide shot of a construction site with cranes and partial building frames under a clear blue sky. The environment is dusty but organized. The color palette emphasizes industrial blues, oranges, and concrete grays. High quality documentary style photography."
+                                style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDHCezF6gcJoeywMbJiaa4aBEBxNAPuGniBWun6loZUSFrdWu46W-LVK_n0cCnXBKatyh5l4Om_7BIlb7W2rFPEoxvyyzAWWo5zkS5AuCHXu-YOmDOgD5arXfweheBmY9LPa2h4rAiLXOzyvcvx0lUzl6BM6rvtfTb7j-e46mieqg4MTdcy3SbnvdTRsHBwMz-c0_cfkepOnopbqjqIlANfG2qzuWIBMwaRUPccd69IB9gBEWwwRvc')"></div>
+                            <div
+                                class="absolute bottom-0 left-0 w-full bg-black/50 text-white p-2 text-xs font-data-tabular rounded-b-md">13:15
+                                PM - ภาพรวมไซต์</div>
+                        </div>
+                        <div class="relative group">
+                            <div
+                                class="bg-cover bg-center w-full aspect-square rounded-md border border-outline-variant"
+                                data-alt="A quality control inspector holding a tablet, pointing at a concrete pillar. The lighting is bright and even, showing clear details of the concrete texture and the inspector's high-visibility vest. The mood is focused and professional, capturing a moment of active inspection."
+                                style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB6oEGt8fNGC9ISYyb2XR6FW35SewUtv4OBQDl3Dfyoa1113WBkUwZULnlWeD0G6pC0Juif6xN4MGjNS-WEzQRp_wKE1b2QPgA9i5Y80uqOZth0r4n_Uo1txWjybNu32dGhxqpisWDnm-8427G5XmI0ohYJ7voSQDCncDgfYsR4Aw8nPpy4BcqKFwdTmdyJfHLre3TgG00vNCRHkyV7cLJAIZTbicDeGl5uJVpXNP0ZcQVl5o7trPc')"></div>
+                            <div
+                                class="absolute bottom-0 left-0 w-full bg-black/50 text-white p-2 text-xs font-data-tabular rounded-b-md">15:00
+                                PM - ตรวจสอบ QC</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Action Buttons -->
+            <div
+                class="mt-stack-lg flex flex-col sm:flex-row gap-4 justify-end mb-stack-lg">
+                <button
+                    class="flex items-center justify-center gap-2 px-6 py-3 border-2 border-primary text-primary rounded-full hover:bg-primary/5 transition-colors text-label-md font-label-md">
+                    <span class="material-symbols-outlined"
+                        data-icon="image">image</span>
+                    บันทึกเป็นรูปภาพ
+                </button>
+                <button
+                    class="flex items-center justify-center gap-2 px-6 py-3 bg-secondary-container text-on-secondary-container rounded-full hover:bg-secondary-container/90 transition-colors shadow-sm text-label-md font-label-md">
+                    <span class="material-symbols-outlined"
+                        data-icon="picture_as_pdf">picture_as_pdf</span>
+                    ส่งออกเป็น PDF
+                </button>
+            </div>
+        </main>
+        <!-- BottomNavBar (Hidden on desktop, shown on mobile if top-level) -->
+        <!-- Suppressed due to "Linear/Transactional" intent of an Export/Preview screen -->
+        <script>
+        // Apply Material Symbols Outlined icons based on data-icon attribute
+        document.querySelectorAll('[data-icon]').forEach(el => {
+            el.classList.add('material-symbols-outlined');
+            el.textContent = el.getAttribute('data-icon');
+        });
+    </script>
+        <nav
+            class="fixed bottom-0 left-0 right-0 bg-surface border-t border-outline-variant flex justify-around items-center h-16 md:hidden z-40">
+            <a
+                class="flex flex-col items-center justify-center gap-1 text-primary"
+                href="#">
+                <span class="material-symbols-outlined"
+                    data-icon="home">home</span>
+                <span class="text-xs font-label-md">หน้าหลัก</span>
+            </a>
+            <a
+                class="flex flex-col items-center justify-center gap-1 text-on-surface-variant"
+                href="#">
+                <span class="material-symbols-outlined"
+                    data-icon="add_circle">add_circle</span>
+                <span class="text-xs font-label-md">เพิ่มรายงาน</span>
+            </a>
+            <a
+                class="flex flex-col items-center justify-center gap-1 text-on-surface-variant"
+                href="#">
+                <span class="material-symbols-outlined"
+                    data-icon="settings">settings</span>
+                <span class="text-xs font-label-md">ตั้งค่า</span>
+            </a>
+        </nav></body></html>
+
+<!-- สร้างรายงานประจำวัน -->
+<!DOCTYPE html>
+
+<html lang="th"><head>
+        <meta charset="utf-8" />
+        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+        <title>สร้างรายงานประจำวัน - FieldOps Pro</title>
+        <script
+            src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Eb+Garamond:wght@400;500;700&amp;family=Manrope:wght@400;500;700&amp;display=swap"
+            rel="stylesheet" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+            rel="stylesheet" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+            rel="stylesheet" />
+        <script
+            id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {"on-primary": "#ffffff", "surface-tint": "#c2652a", "outline-variant": "#d8d0c8", "surface-container": "#f2ece4", "surface-variant": "#ece6dc", background: "#faf5ee", "on-error-container": "#7a1a10", "on-secondary-fixed-variant": "#504840", "error-container": "#fce4e0", "primary-fixed-dim": "#f0a878", "inverse-primary": "#f0a878", "on-secondary-fixed": "#2a2420", "surface-container-low": "#f6f0e8", "tertiary-container": "#d47070", "primary-fixed": "#fbe8d8", "surface-dim": "#dcd6cc", "secondary-fixed-dim": "#cec6be", "secondary-fixed": "#eae2da", "inverse-surface": "#3a302a", "on-primary-fixed-variant": "#8a4518", "on-primary-fixed": "#401a08", "on-tertiary-container": "#3a2020", "on-error": "#ffffff", "on-surface": "#3a302a", "surface-container-lowest": "#ffffff", "tertiary-fixed": "#fce0e0", tertiary: "#8c3c3c", "surface-bright": "#faf5ee", "on-surface-variant": "#605850", "on-background": "#3a302a", "on-primary-container": "#fbe8d8", outline: "#9a9088", secondary: "#78706a", "primary-container": "#e08850", "on-tertiary-fixed": "#2e1515", "surface-container-high": "#ece6dc", "tertiary-fixed-dim": "#e8a0a0", "surface-container-highest": "#e6e0d6", "on-tertiary": "#ffffff", surface: "#faf5ee", error: "#c0392b", "secondary-container": "#eae2da", "on-tertiary-fixed-variant": "#6e3030", "on-secondary": "#ffffff", "inverse-on-surface": "#faf5ee", primary: "#c2652a", "on-secondary-container": "#605850"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}, spacing: {"margin-desktop": "2rem", "touch-target-min": "48px", "margin-mobile": "1rem", "stack-md": "1rem", "stack-lg": "1.5rem", gutter: "1rem", "stack-sm": "0.5rem"}, fontFamily: {"label-md": ["Hanken Grotesk"], "body-md": ["Hanken Grotesk"], "headline-lg": ["Hanken Grotesk"], "data-tabular": ["Hanken Grotesk"], "body-lg": ["Hanken Grotesk"], "headline-lg-mobile": ["Hanken Grotesk"], "headline-md": ["Hanken Grotesk"], headline: ["Eb Garamond"], display: ["Eb Garamond"], body: ["Manrope"], label: ["Manrope"]}, fontSize: {"label-md": ["14px", {lineHeight: "20px", letterSpacing: "0.05em", fontWeight: "600"}], "body-md": ["16px", {lineHeight: "24px", fontWeight: "400"}], "headline-lg": ["32px", {lineHeight: "40px", letterSpacing: "-0.02em", fontWeight: "700"}], "data-tabular": ["14px", {lineHeight: "20px", fontWeight: "500"}], "body-lg": ["18px", {lineHeight: "28px", fontWeight: "400"}], "headline-lg-mobile": ["24px", {lineHeight: "32px", fontWeight: "700"}], "headline-md": ["20px", {lineHeight: "28px", fontWeight: "600"}]}}}};</script>
+        <style>
+        body { font-family: 'Hanken Grotesk', sans-serif; }
+    </style>
+        <style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+    </head>
+    <body class="bg-background text-on-background min-h-screen pb-24 md:pb-0">
+        <!-- TopAppBar -->
+        <header
+            class="docked full-width top-0 bg-surface dark:bg-inverse-surface border-b border-outline-variant dark:border-outline flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop h-touch-target-min z-40 sticky">
+            <div class="flex items-center gap-2">
+                <span
+                    class="material-symbols-outlined text-primary dark:text-primary-fixed-dim"
+                    data-icon="assignment_turned_in">assignment_turned_in</span>
+                <span
+                    class="text-headline-md font-headline-md font-bold text-primary dark:text-primary-fixed-dim">DailyReport</span>
+            </div>
+            <div
+                class="w-8 h-8 rounded-full overflow-hidden bg-surface-container flex items-center justify-center">
+                <span class="material-symbols-outlined text-on-surface-variant"
+                    data-icon="person">person</span>
+            </div>
+        </header>
+        <main
+            class="max-w-screen-md mx-auto px-margin-mobile md:px-margin-desktop py-stack-lg">
+            <!-- Header Section -->
+            <div class="flex flex-col items-center mb-stack-lg">
+                <img alt="FieldOps Pro Logo"
+                    class="w-24 h-24 mb-4 object-contain rounded-sm shadow-sm border border-outline-variant"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWAfP3Ldll-IrpcfSen-puj6FS6n24NmSJ7lJwWjQ4Sli_Qmkh9paURfOOWXlyynRIWCtbehVL1cFXkh5ffxAvgBRlHD2v13HB7OKj-VvKADfvOoZvzSVD2VxrDy5QFLpyjJVsT1QPnomkVtEVA41m74NJKWbhE59NOp2bRnty0kCBa8B7lhR7GAriiRp72YNUy6P2HnS7qhyKpT556RjtVrvXOLSxC4It2ucDKduWMNpKBBHaPuc" />
+                <h1
+                    class="text-headline-lg-mobile md:text-headline-lg font-headline-lg-mobile md:font-headline-lg text-primary text-center">สร้างรายงานประจำวัน</h1>
+                <div
+                    class="mt-2 px-4 py-2 bg-secondary-fixed rounded-full inline-flex items-center gap-2 border border-secondary-fixed-dim">
+                    <span
+                        class="material-symbols-outlined text-on-secondary-fixed text-sm"
+                        data-icon="calendar_today">calendar_today</span>
+                    <span
+                        class="text-label-md font-label-md text-on-secondary-fixed">24
+                        ตุลาคม 2566</span>
+                </div>
+            </div>
+            <!-- Form Section -->
+            <div
+                class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-lg mb-stack-lg shadow-sm">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-stack-lg">
+                    <div class="flex flex-col gap-1">
+                        <label
+                            class="text-label-md font-label-md text-on-surface-variant">กลุ่มงาน</label>
+                        <select
+                            class="w-full h-touch-target-min border-outline-variant rounded-lg bg-surface focus:border-primary focus:ring-1 focus:ring-primary text-body-md font-body-md">
+                            <option>เลือกกลุ่มงาน</option>
+                            <option>งานโครงสร้าง</option>
+                            <option>งานสถาปัตย์</option>
+                            <option>งานระบบ</option>
+                        </select>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <label
+                            class="text-label-md font-label-md text-on-surface-variant">ไซต์งาน/สถานที่</label>
+                        <select
+                            class="w-full h-touch-target-min border-outline-variant rounded-lg bg-surface focus:border-primary focus:ring-1 focus:ring-primary text-body-md font-body-md">
+                            <option>เลือกไซต์งาน</option>
+                            <option>Site A - สุขุมวิท</option>
+                            <option>Site B - รัชดา</option>
+                        </select>
+                    </div>
+                    <div class="flex flex-col gap-1 md:col-span-2">
+                        <label
+                            class="text-label-md font-label-md text-on-surface-variant">เวลาเลิกงาน</label>
+                        <input
+                            class="w-full h-touch-target-min border-outline-variant rounded-lg bg-surface focus:border-primary focus:ring-1 focus:ring-primary text-body-md font-body-md"
+                            type="time" />
+                    </div>
+                </div>
+            </div>
+            <!-- Add Items Section -->
+            <div
+                class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-lg mb-stack-lg shadow-sm">
+                <h2
+                    class="text-headline-md font-headline-md mb-stack-md text-primary">เพิ่มรายการงาน</h2>
+                <div class="grid grid-cols-1 gap-stack-md mb-stack-md">
+                    <div class="flex flex-col gap-1">
+                        <label
+                            class="text-label-md font-label-md text-on-surface-variant">รายละเอียด</label>
+                        <input
+                            class="w-full h-touch-target-min border-outline-variant rounded-lg bg-surface focus:border-primary focus:ring-1 focus:ring-primary text-body-md font-body-md"
+                            placeholder="ระบุรายละเอียดงาน..." type="text" />
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <label
+                            class="text-label-md font-label-md text-on-surface-variant">หมายเหตุ</label>
+                        <input
+                            class="w-full h-touch-target-min border-outline-variant rounded-lg bg-surface focus:border-primary focus:ring-1 focus:ring-primary text-body-md font-body-md"
+                            placeholder="ระบุหมายเหตุ (ถ้ามี)..." type="text" />
+                    </div>
+                </div>
+                <button
+                    class="w-full md:w-auto h-touch-target-min bg-secondary-container hover:bg-secondary text-on-secondary-container font-label-md text-label-md rounded-lg px-6 flex items-center justify-center gap-2 transition-colors">
+                    <span class="material-symbols-outlined"
+                        data-icon="add">add</span>
+                    เพิ่มรายการ
+                </button>
+            </div>
+            <!-- Dynamic Table Section -->
+            <div
+                class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden mb-stack-lg shadow-sm">
+                <div class="overflow-x-auto w-full">
+                    <table class="w-full text-left border-collapse">
+                        <thead
+                            class="bg-surface-container-low border-b border-outline-variant">
+                            <tr>
+                                <th
+                                    class="p-4 text-label-md font-label-md text-on-surface-variant whitespace-nowrap min-w-[200px] sticky left-0 bg-surface-container-low z-10 shadow-[1px_0_0_0_#c4c5d5]">รายละเอียด</th>
+                                <th
+                                    class="p-4 text-label-md font-label-md text-on-surface-variant whitespace-nowrap min-w-[150px]">หมายเหตุ</th>
+                                <th
+                                    class="p-4 text-label-md font-label-md text-on-surface-variant whitespace-nowrap w-24 text-center">จัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody
+                            class="text-data-tabular font-data-tabular divide-y divide-outline-variant">
+                            <tr
+                                class="hover:bg-surface-container-lowest transition-colors group">
+                                <td
+                                    class="p-4 text-on-surface sticky left-0 bg-surface-container-lowest group-hover:bg-surface-container-lowest z-10 shadow-[1px_0_0_0_#c4c5d5]">เทคอนกรีตฐานราก
+                                    Zone A</td>
+                                <td
+                                    class="p-4 text-on-surface-variant">ใช้คอนกรีต
+                                    10 คิว</td>
+                                <td class="p-4 text-center whitespace-nowrap">
+                                    <button
+                                        class="p-2 text-outline hover:text-primary transition-colors"><span
+                                            class="material-symbols-outlined text-sm"
+                                            data-icon="edit">edit</span></button>
+                                    <button
+                                        class="p-2 text-outline hover:text-error transition-colors"><span
+                                            class="material-symbols-outlined text-sm"
+                                            data-icon="delete">delete</span></button>
+                                </td>
+                            </tr>
+                            <tr
+                                class="bg-surface-container-low/30 hover:bg-surface-container-lowest transition-colors group">
+                                <td
+                                    class="p-4 text-on-surface sticky left-0 bg-[#fbfcfd] group-hover:bg-surface-container-lowest z-10 shadow-[1px_0_0_0_#c4c5d5]">ผูกเหล็กคานชั้น
+                                    2</td>
+                                <td
+                                    class="p-4 text-on-surface-variant">เสร็จไปแล้ว
+                                    50%</td>
+                                <td class="p-4 text-center whitespace-nowrap">
+                                    <button
+                                        class="p-2 text-outline hover:text-primary transition-colors"><span
+                                            class="material-symbols-outlined text-sm"
+                                            data-icon="edit">edit</span></button>
+                                    <button
+                                        class="p-2 text-outline hover:text-error transition-colors"><span
+                                            class="material-symbols-outlined text-sm"
+                                            data-icon="delete">delete</span></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div
+                    class="p-4 border-t border-outline-variant bg-surface-container-low flex justify-between items-center">
+                    <span
+                        class="text-label-md font-label-md text-on-surface-variant">รวม
+                        2 รายการ</span>
+                </div>
+            </div>
+            <!-- Image Upload Section -->
+            <div
+                class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-lg mb-stack-lg shadow-sm">
+                <h2
+                    class="text-headline-md font-headline-md mb-stack-md text-primary flex items-center gap-2">
+                    <span class="material-symbols-outlined"
+                        data-icon="photo_camera">photo_camera</span>แนบรูปถ่าย
+                </h2>
+                <div
+                    class="border-2 border-dashed border-outline-variant rounded-lg p-8 flex flex-col items-center justify-center bg-surface-container-low cursor-pointer hover:bg-surface-container transition-colors mb-4">
+                    <span
+                        class="material-symbols-outlined text-4xl text-outline mb-2"
+                        data-icon="upload_file">upload_file</span>
+                    <p
+                        class="text-body-md font-body-md text-on-surface-variant mb-1">แตะเพื่ออัปโหลด
+                        หรือลากไฟล์มาวาง</p>
+                    <p class="text-label-md font-label-md text-outline">รองรับ
+                        JPG, PNG (สูงสุด 10MB)</p>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div
+                        class="aspect-square bg-surface-container rounded-lg border border-outline-variant overflow-hidden relative group">
+                        <div class="bg-cover bg-center w-full h-full"
+                            data-alt="A close-up shot of freshly poured concrete in a construction site foundation. Gray concrete texture, rebar visible. Sunny daylight, industrial aesthetic, high contrast."
+                            style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDIM7IcSKyx84wKb6YSgrhJ9_6tRHJ9pSaU_X-FS4evGaicgX_3GPNshvhOeYPWOaPAcl4Ti9cjISXlJmHyXEwtXOKeD5qyfeSx9LJfobgDlpZGp5WSTtXVTpjqXjy3Z4dLH198drV9NsTPOzke0nk_E2E_xeJsTGQI3fhJE5cA-Qf9HSxDnXdvsDlPCp4pvshDtkop_KyFZ6RwFm9wH8_7k2t4KkgGouyrPRdh_JTlapHldebj4ck')"></div>
+                        <button
+                            class="absolute top-2 right-2 p-1 bg-surface-container-lowest rounded-full shadow-sm text-error opacity-0 group-hover:opacity-100 transition-opacity">
+                            <span class="material-symbols-outlined text-sm"
+                                data-icon="close">close</span>
+                        </button>
+                        <div
+                            class="absolute bottom-0 w-full bg-surface-container-lowest/80 backdrop-blur-sm p-1 text-center">
+                            <span
+                                class="text-[10px] text-on-surface font-label-md">14:30</span>
+                        </div>
+                    </div>
+                    <div
+                        class="aspect-square bg-surface-container rounded-lg border border-outline-variant overflow-hidden relative group">
+                        <div class="bg-cover bg-center w-full h-full"
+                            data-alt="Workers tying steel rebar for a building floor slab. Industrial construction site setting, bright daylight, metallic textures, hardhats visible. Professional structural engineering context."
+                            style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuApbhbHnvyBbhRF3RPq-UKu_LxzpTYhhm2l3NQ1R4P9McCq0S_TcQe8kKCyM6DL6M3jCYOlFKfFf5xog-FPDMlt7CfXAVOwGHDHj1wFOGVNwZ0JnnJ9etnNQJcgLYCXU0dOaC3EvuaiVtSDldloObD_eUktbdtLk5yJZxSRgwjyTMsDE0HDCEBXSyqmbC1YF-tCfUDcEGYLCqcfvB_5gZN9YgXLxlvplhGRuJi-_O5TzfUqq3Q9HSA')"></div>
+                        <button
+                            class="absolute top-2 right-2 p-1 bg-surface-container-lowest rounded-full shadow-sm text-error opacity-0 group-hover:opacity-100 transition-opacity">
+                            <span class="material-symbols-outlined text-sm"
+                                data-icon="close">close</span>
+                        </button>
+                        <div
+                            class="absolute bottom-0 w-full bg-surface-container-lowest/80 backdrop-blur-sm p-1 text-center">
+                            <span
+                                class="text-[10px] text-on-surface font-label-md">16:15</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Action Buttons -->
+            <div
+                class="flex justify-end pt-4 pb-8 md:pb-4 border-t border-outline-variant">
+                <button
+                    class="w-full md:w-auto h-touch-target-min bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md rounded-lg px-8 flex items-center justify-center gap-2 transition-colors shadow-[0_4px_12px_rgba(30,64,175,0.08)]">
+                    <span class="material-symbols-outlined"
+                        data-icon="save">save</span>
+                    บันทึกรายงาน
+                </button>
+            </div>
+        </main>
+        <!-- BottomNavBar -->
+        <nav
+            class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 bg-surface dark:bg-inverse-surface border-t border-outline-variant dark:border-outline md:hidden"><!-- Home (Inactive) -->
+            <a
+                class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant px-4 py-1 hover:bg-surface-container-high dark:hover:bg-surface-variant scale-95 active:scale-90 transition-transform duration-150 w-full h-full rounded-lg"
+                href="#">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span
+                    class="text-label-md font-label-md text-[10px] mt-1">Home</span>
+            </a>
+            <!-- Add Report (Active) -->
+            <a
+                class="flex flex-col items-center justify-center bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary rounded-full px-4 py-1 scale-95 active:scale-90 transition-transform duration-150 w-3/4 max-w-[100px] h-12 shadow-sm"
+                href="#">
+                <span class="material-symbols-outlined"
+                    style="font-variation-settings: 'FILL' 1;">add_circle</span>
+                <span
+                    class="text-label-md font-label-md text-[10px] mt-1 font-bold">Add
+                    Report</span>
+            </a>
+            <!-- Settings (Inactive) -->
+            <a
+                class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant px-4 py-1 hover:bg-surface-container-high dark:hover:bg-surface-variant scale-95 active:scale-90 transition-transform duration-150 w-full h-full rounded-lg"
+                href="#">
+                <span class="material-symbols-outlined">settings</span>
+                <span
+                    class="text-label-md font-label-md text-[10px] mt-1">Settings</span>
+            </a></nav>
+    </body></html>
+
+<!-- ตั้งค่ากลุ่มงานและไซต์งาน -->
+<!DOCTYPE html>
+
+<html class="light" lang="th"><head>
+        <meta charset="utf-8" />
+        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+        <title>Settings - Daily Report</title>
+        <script
+            src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Eb+Garamond:wght@400;500;700&amp;family=Manrope:wght@400;500;700&amp;display=swap"
+            rel="stylesheet" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+            rel="stylesheet" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+            rel="stylesheet" />
+        <script
+            id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {"on-primary": "#ffffff", "surface-tint": "#c2652a", "outline-variant": "#d8d0c8", "surface-container": "#f2ece4", "surface-variant": "#ece6dc", background: "#faf5ee", "on-error-container": "#7a1a10", "on-secondary-fixed-variant": "#504840", "error-container": "#fce4e0", "primary-fixed-dim": "#f0a878", "inverse-primary": "#f0a878", "on-secondary-fixed": "#2a2420", "surface-container-low": "#f6f0e8", "tertiary-container": "#d47070", "primary-fixed": "#fbe8d8", "surface-dim": "#dcd6cc", "secondary-fixed-dim": "#cec6be", "secondary-fixed": "#eae2da", "inverse-surface": "#3a302a", "on-primary-fixed-variant": "#8a4518", "on-primary-fixed": "#401a08", "on-tertiary-container": "#3a2020", "on-error": "#ffffff", "on-surface": "#3a302a", "surface-container-lowest": "#ffffff", "tertiary-fixed": "#fce0e0", tertiary: "#8c3c3c", "surface-bright": "#faf5ee", "on-surface-variant": "#605850", "on-background": "#3a302a", "on-primary-container": "#fbe8d8", outline: "#9a9088", secondary: "#78706a", "primary-container": "#e08850", "on-tertiary-fixed": "#2e1515", "surface-container-high": "#ece6dc", "tertiary-fixed-dim": "#e8a0a0", "surface-container-highest": "#e6e0d6", "on-tertiary": "#ffffff", surface: "#faf5ee", error: "#c0392b", "secondary-container": "#eae2da", "on-tertiary-fixed-variant": "#6e3030", "on-secondary": "#ffffff", "inverse-on-surface": "#faf5ee", primary: "#c2652a", "on-secondary-container": "#605850"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}, spacing: {"margin-desktop": "2rem", "touch-target-min": "48px", "margin-mobile": "1rem", "stack-md": "1rem", "stack-lg": "1.5rem", gutter: "1rem", "stack-sm": "0.5rem"}, fontFamily: {"label-md": ["Hanken Grotesk"], "body-md": ["Hanken Grotesk"], "headline-lg": ["Hanken Grotesk"], "data-tabular": ["Hanken Grotesk"], "body-lg": ["Hanken Grotesk"], "headline-lg-mobile": ["Hanken Grotesk"], "headline-md": ["Hanken Grotesk"], headline: ["Eb Garamond"], display: ["Eb Garamond"], body: ["Manrope"], label: ["Manrope"]}, fontSize: {"label-md": ["14px", {lineHeight: "20px", letterSpacing: "0.05em", fontWeight: "600"}], "body-md": ["16px", {lineHeight: "24px", fontWeight: "400"}], "headline-lg": ["32px", {lineHeight: "40px", letterSpacing: "-0.02em", fontWeight: "700"}], "data-tabular": ["14px", {lineHeight: "20px", fontWeight: "500"}], "body-lg": ["18px", {lineHeight: "28px", fontWeight: "400"}], "headline-lg-mobile": ["24px", {lineHeight: "32px", fontWeight: "700"}], "headline-md": ["20px", {lineHeight: "28px", fontWeight: "600"}]}}}};</script>
+        <style>
+        body { background-color: #f7f9fb; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .material-symbols-outlined.filled { font-variation-settings: 'FILL' 1; }
+    </style>
+        <style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+        <style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+    </head>
+    <body
+        class="text-on-background font-body-md min-h-screen flex flex-col pb-[80px]">
+        <!-- TopAppBar -->
+        <header
+            class="bg-surface dark:bg-inverse-surface border-b border-outline-variant dark:border-outline docked full-width top-0 flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop h-touch-target-min transition-colors duration-200 sticky z-40 shadow-sm">
+            <div class="flex items-center gap-4">
+                <button
+                    class="text-primary dark:text-primary-fixed-dim hover:bg-surface-container dark:hover:bg-surface-variant p-2 rounded-full transition-colors duration-200">
+                    <span
+                        class="material-symbols-outlined">assignment_turned_in</span>
+                </button>
+                <h1
+                    class="text-headline-md font-headline-md font-bold text-primary dark:text-primary-fixed-dim">DailyReport</h1>
+            </div>
+            <div class="flex items-center">
+                <button
+                    class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container dark:hover:bg-surface-variant p-2 rounded-full transition-colors duration-200 overflow-hidden w-10 h-10 flex items-center justify-center">
+                    <span class="material-symbols-outlined">apps_outage</span>
+                    <!-- Fallback user icon since user_profile_avatar isn't standard material icon -->
+                    <span
+                        class="material-symbols-outlined hidden">account_circle</span>
+                </button>
+            </div>
+        </header>
+        <!-- Main Content Canvas -->
+        <main
+            class="flex-grow flex flex-col px-margin-mobile md:px-margin-desktop py-stack-lg max-w-4xl mx-auto w-full gap-stack-lg">
+            <div class="mb-2">
+                <h2
+                    class="text-headline-md font-headline-md font-bold text-on-surface">ตั้งค่าระบบ
+                    (Settings)</h2>
+                <p
+                    class="text-body-md font-body-md text-on-surface-variant mt-1">จัดการข้อมูลหลักสำหรับใช้งานในแอปพลิเคชัน</p>
+            </div>
+            <!-- Section 1: Work Groups -->
+            <section
+                class="bg-white border border-outline-variant rounded-xl overflow-hidden shadow-[0_4px_12px_rgba(55,85,195,0.08)]">
+                <div
+                    class="p-4 border-b border-outline-variant flex justify-between items-center bg-surface-container-lowest">
+                    <div class="flex items-center gap-3">
+                        <span
+                            class="material-symbols-outlined text-primary">work</span>
+                        <h3
+                            class="text-headline-md font-headline-md font-semibold text-on-surface">จัดการกลุ่มงาน
+                            (Work Groups)</h3>
+                    </div>
+                    <button
+                        class="bg-secondary-container text-on-secondary-container hover:bg-[#e66a15] px-4 py-2 rounded-lg flex items-center gap-2 transition-colors min-h-touch-target-min">
+                        <span class="material-symbols-outlined">add</span>
+                        <span
+                            class="text-label-md font-label-md">เพิ่มกลุ่มงาน</span>
+                    </button>
+                </div>
+                <div class="p-0">
+                    <ul class="divide-y divide-surface-variant">
+                        <li
+                            class="p-4 flex justify-between items-center hover:bg-surface-container-low transition-colors group">
+                            <div>
+                                <p
+                                    class="text-body-md font-body-md font-medium text-on-surface">งานโครงสร้าง
+                                    (Structural Work)</p>
+                                <p
+                                    class="text-label-md font-label-md text-on-surface-variant">รหัส:
+                                    Wg-01</p>
+                            </div>
+                            <div
+                                class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button
+                                    class="p-2 text-surface-tint hover:bg-primary-fixed rounded-full transition-colors"
+                                    title="แก้ไข">
+                                    <span
+                                        class="material-symbols-outlined">edit</span>
+                                </button>
+                                <button
+                                    class="p-2 text-error hover:bg-error-container rounded-full transition-colors"
+                                    title="ลบ">
+                                    <span
+                                        class="material-symbols-outlined">delete</span>
+                                </button>
+                            </div>
+                        </li>
+                        <li
+                            class="p-4 flex justify-between items-center hover:bg-surface-container-low transition-colors bg-surface-bright group">
+                            <div>
+                                <p
+                                    class="text-body-md font-body-md font-medium text-on-surface">งานสถาปัตยกรรม
+                                    (Architectural Work)</p>
+                                <p
+                                    class="text-label-md font-label-md text-on-surface-variant">รหัส:
+                                    Wg-02</p>
+                            </div>
+                            <div
+                                class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button
+                                    class="p-2 text-surface-tint hover:bg-primary-fixed rounded-full transition-colors"
+                                    title="แก้ไข">
+                                    <span
+                                        class="material-symbols-outlined">edit</span>
+                                </button>
+                                <button
+                                    class="p-2 text-error hover:bg-error-container rounded-full transition-colors"
+                                    title="ลบ">
+                                    <span
+                                        class="material-symbols-outlined">delete</span>
+                                </button>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+            <!-- Section 2: Sites -->
+            <section
+                class="bg-white border border-outline-variant rounded-xl overflow-hidden shadow-[0_4px_12px_rgba(55,85,195,0.08)]">
+                <div
+                    class="p-4 border-b border-outline-variant flex justify-between items-center bg-surface-container-lowest">
+                    <div class="flex items-center gap-3">
+                        <span
+                            class="material-symbols-outlined text-primary">location_on</span>
+                        <h3
+                            class="text-headline-md font-headline-md font-semibold text-on-surface">จัดการสถานที่/ไซต์งาน
+                            (Sites)</h3>
+                    </div>
+                    <button
+                        class="bg-secondary-container text-on-secondary-container hover:bg-[#e66a15] px-4 py-2 rounded-lg flex items-center gap-2 transition-colors min-h-touch-target-min">
+                        <span class="material-symbols-outlined">add</span>
+                        <span
+                            class="text-label-md font-label-md">เพิ่มสถานที่</span>
+                    </button>
+                </div>
+                <div class="p-0">
+                    <ul class="divide-y divide-surface-variant">
+                        <li
+                            class="p-4 flex justify-between items-center hover:bg-surface-container-low transition-colors group">
+                            <div>
+                                <p
+                                    class="text-body-md font-body-md font-medium text-on-surface">โครงการ
+                                    A - สุขุมวิท (Project A)</p>
+                                <p
+                                    class="text-label-md font-label-md text-on-surface-variant">กรุงเทพมหานคร</p>
+                            </div>
+                            <div
+                                class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button
+                                    class="p-2 text-surface-tint hover:bg-primary-fixed rounded-full transition-colors"
+                                    title="แก้ไข">
+                                    <span
+                                        class="material-symbols-outlined">edit</span>
+                                </button>
+                                <button
+                                    class="p-2 text-error hover:bg-error-container rounded-full transition-colors"
+                                    title="ลบ">
+                                    <span
+                                        class="material-symbols-outlined">delete</span>
+                                </button>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+            <!-- Section 3: Time Settings -->
+            <section
+                class="bg-white border border-outline-variant rounded-xl overflow-hidden shadow-[0_4px_12px_rgba(55,85,195,0.08)]">
+                <div
+                    class="p-4 border-b border-outline-variant flex items-center gap-3 bg-surface-container-lowest">
+                    <span
+                        class="material-symbols-outlined text-primary">schedule</span>
+                    <h3
+                        class="text-headline-md font-headline-md font-semibold text-on-surface">ตั้งค่าเวลา
+                        (Time Settings)</h3>
+                </div>
+                <div class="p-4">
+                    <div class="max-w-xs">
+                        <label
+                            class="block text-label-md font-label-md text-on-surface mb-2">เวลาเลิกงานเริ่มต้น
+                            (Default End Time)</label>
+                        <div class="relative">
+                            <input
+                                class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg p-3 text-body-md font-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors h-touch-target-min"
+                                type="time" value="17:00" />
+                        </div>
+                        <p
+                            class="text-label-md font-label-md text-on-surface-variant mt-2 text-sm">เวลานี้จะถูกตั้งเป็นค่าเริ่มต้นเมื่อสร้างรายงานใหม่</p>
+                    </div>
+                    <div
+                        class="mt-4 pt-4 border-t border-outline-variant flex justify-end">
+                        <button
+                            class="bg-primary text-on-primary px-6 py-2 rounded-lg font-label-md text-label-md hover:bg-surface-tint transition-colors min-h-touch-target-min">
+                            บันทึกการตั้งค่าเวลา
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <!-- BottomNavBar -->
+        <nav
+            class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 bg-surface dark:bg-inverse-surface border-t border-outline-variant dark:border-outline md:hidden shadow-[0_-2px_8px_rgba(0,0,0,0.05)]"><a
+                class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant px-4 py-1 hover:bg-surface-container-high dark:hover:bg-surface-variant scale-95 active:scale-90 transition-transform duration-150"
+                href="#">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span class="text-[10px] font-label-md mt-1">Home</span>
+            </a>
+            <a
+                class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant px-4 py-1 hover:bg-surface-container-high dark:hover:bg-surface-variant scale-95 active:scale-90 transition-transform duration-150"
+                href="#">
+                <span class="material-symbols-outlined">add_circle</span>
+                <span class="text-[10px] font-label-md mt-1">Add Report</span>
+            </a>
+            <a
+                class="flex flex-col items-center justify-center bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary rounded-full px-4 py-1 scale-95 active:scale-90 transition-transform duration-150"
+                href="#">
+                <span class="material-symbols-outlined filled">settings</span>
+                <span
+                    class="text-[10px] font-label-md mt-1 font-bold">Settings</span>
+            </a></nav>
+    </body></html>
+
+<!-- Design System -->
+<!DOCTYPE html>
+
+<html class="light" lang="th"><head>
+        <meta charset="utf-8" />
+        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+        <title>FieldOps Pro - หน้าหลัก</title>
+        <script
+            src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Eb+Garamond:wght@400;500;700&amp;family=Manrope:wght@400;500;700&amp;display=swap"
+            rel="stylesheet" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+            rel="stylesheet" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+            rel="stylesheet" />
+        <script
+            id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {"on-primary": "#ffffff", "surface-tint": "#c2652a", "outline-variant": "#d8d0c8", "surface-container": "#f2ece4", "surface-variant": "#ece6dc", background: "#faf5ee", "on-error-container": "#7a1a10", "on-secondary-fixed-variant": "#504840", "error-container": "#fce4e0", "primary-fixed-dim": "#f0a878", "inverse-primary": "#f0a878", "on-secondary-fixed": "#2a2420", "surface-container-low": "#f6f0e8", "tertiary-container": "#d47070", "primary-fixed": "#fbe8d8", "surface-dim": "#dcd6cc", "secondary-fixed-dim": "#cec6be", "secondary-fixed": "#eae2da", "inverse-surface": "#3a302a", "on-primary-fixed-variant": "#8a4518", "on-primary-fixed": "#401a08", "on-tertiary-container": "#3a2020", "on-error": "#ffffff", "on-surface": "#3a302a", "surface-container-lowest": "#ffffff", "tertiary-fixed": "#fce0e0", tertiary: "#8c3c3c", "surface-bright": "#faf5ee", "on-surface-variant": "#605850", "on-background": "#3a302a", "on-primary-container": "#fbe8d8", outline: "#9a9088", secondary: "#78706a", "primary-container": "#e08850", "on-tertiary-fixed": "#2e1515", "surface-container-high": "#ece6dc", "tertiary-fixed-dim": "#e8a0a0", "surface-container-highest": "#e6e0d6", "on-tertiary": "#ffffff", surface: "#faf5ee", error: "#c0392b", "secondary-container": "#eae2da", "on-tertiary-fixed-variant": "#6e3030", "on-secondary": "#ffffff", "inverse-on-surface": "#faf5ee", primary: "#c2652a", "on-secondary-container": "#605850"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}, spacing: {"margin-desktop": "2rem", "touch-target-min": "48px", "margin-mobile": "1rem", "stack-md": "1rem", "stack-lg": "1.5rem", gutter: "1rem", "stack-sm": "0.5rem"}, fontFamily: {"label-md": ["Hanken Grotesk"], "body-md": ["Hanken Grotesk"], "headline-lg": ["Hanken Grotesk"], "data-tabular": ["Hanken Grotesk"], "body-lg": ["Hanken Grotesk"], "headline-lg-mobile": ["Hanken Grotesk"], "headline-md": ["Hanken Grotesk"], headline: ["Eb Garamond"], display: ["Eb Garamond"], body: ["Manrope"], label: ["Manrope"]}, fontSize: {"label-md": ["14px", {lineHeight: "20px", letterSpacing: "0.05em", fontWeight: "600"}], "body-md": ["16px", {lineHeight: "24px", fontWeight: "400"}], "headline-lg": ["32px", {lineHeight: "40px", letterSpacing: "-0.02em", fontWeight: "700"}], "data-tabular": ["14px", {lineHeight: "20px", fontWeight: "500"}], "body-lg": ["18px", {lineHeight: "28px", fontWeight: "400"}], "headline-lg-mobile": ["24px", {lineHeight: "32px", fontWeight: "700"}], "headline-md": ["20px", {lineHeight: "28px", fontWeight: "600"}]}}}};</script>
+        <style>
+        body { font-family: 'Hanken Grotesk', sans-serif; }
+    </style>
+        <style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+    </head>
+    <body class="bg-background text-on-background min-h-screen pb-24">
+        <!-- TopAppBar -->
+        <header
+            class="bg-surface dark:bg-inverse-surface border-b border-outline-variant dark:border-outline flat no shadows flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop h-touch-target-min sticky top-0 z-40 transition-colors duration-200">
+            <div class="flex items-center gap-3">
+                <span
+                    class="material-symbols-outlined text-primary dark:text-primary-fixed-dim">assignment_turned_in</span>
+                <div class="flex items-center gap-2">
+                    <img alt="FieldOps Pro Logo"
+                        class="h-6 w-6 object-contain rounded-DEFAULT"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWAfP3Ldll-IrpcfSen-puj6FS6n24NmSJ7lJwWjQ4Sli_Qmkh9paURfOOWXlyynRIWCtbehVL1cFXkh5ffxAvgBRlHD2v13HB7OKj-VvKADfvOoZvzSVD2VxrDy5QFLpyjJVsT1QPnomkVtEVA41m74NJKWbhE59NOp2bRnty0kCBa8B7lhR7GAriiRp72YNUy6P2HnS7qhyKpT556RjtVrvXOLSxC4It2ucDKduWMNpKBBHaPuc" />
+                    <span
+                        class="text-headline-md font-headline-md font-bold text-primary dark:text-primary-fixed-dim">FieldOps
+                        Pro</span>
+                </div>
+            </div>
+            <div class="flex items-center">
+                <span
+                    class="material-symbols-outlined text-on-surface-variant dark:text-surface-variant cursor-pointer hover:bg-surface-container dark:hover:bg-surface-variant rounded-full p-2 transition-colors duration-200">account_circle</span>
+            </div>
+        </header>
+        <!-- Main Content -->
+        <main
+            class="px-margin-mobile md:px-margin-desktop py-stack-lg max-w-7xl mx-auto space-y-stack-lg">
+            <!-- Header Section -->
+            <section class="flex flex-col gap-stack-sm">
+                <h1
+                    class="text-headline-lg-mobile md:text-headline-lg font-headline-lg-mobile md:font-headline-lg text-on-background">หน้าหลัก</h1>
+                <p
+                    class="text-body-md font-body-md text-on-surface-variant">เลือกวันที่เพื่อเริ่มรายงาน</p>
+            </section>
+            <!-- Calendar Card -->
+            <section
+                class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md flex flex-col gap-stack-md">
+                <div class="flex justify-between items-center">
+                    <h2
+                        class="text-headline-md font-headline-md text-on-surface">ปฏิทินรายเดือน
+                        (ตุลาคม 2023)</h2>
+                    <div class="flex gap-2">
+                        <button
+                            class="p-2 rounded-full hover:bg-surface-container transition-colors"><span
+                                class="material-symbols-outlined text-on-surface-variant">chevron_left</span></button>
+                        <button
+                            class="p-2 rounded-full hover:bg-surface-container transition-colors"><span
+                                class="material-symbols-outlined text-on-surface-variant">chevron_right</span></button>
+                    </div>
+                </div>
+                <!-- Calendar Grid -->
+                <div class="grid grid-cols-7 gap-1 text-center">
+                    <!-- Days of week -->
+                    <div
+                        class="text-label-md font-label-md text-on-surface-variant py-2">อา</div>
+                    <div
+                        class="text-label-md font-label-md text-on-surface-variant py-2">จ</div>
+                    <div
+                        class="text-label-md font-label-md text-on-surface-variant py-2">อ</div>
+                    <div
+                        class="text-label-md font-label-md text-on-surface-variant py-2">พ</div>
+                    <div
+                        class="text-label-md font-label-md text-on-surface-variant py-2">พฤ</div>
+                    <div
+                        class="text-label-md font-label-md text-on-surface-variant py-2">ศ</div>
+                    <div
+                        class="text-label-md font-label-md text-on-surface-variant py-2">ส</div>
+                    <!-- Empty slots -->
+                    <div class="p-2 text-on-surface-variant opacity-50">28</div>
+                    <div class="p-2 text-on-surface-variant opacity-50">29</div>
+                    <div class="p-2 text-on-surface-variant opacity-50">30</div>
+                    <!-- Days -->
+                    <div
+                        class="p-2 cursor-pointer rounded-full hover:bg-surface-container-high transition-colors">1</div>
+                    <div
+                        class="p-2 cursor-pointer rounded-full hover:bg-surface-container-high transition-colors relative">
+                        2
+                        <div
+                            class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-primary rounded-full"></div>
+                    </div>
+                    <div
+                        class="p-2 cursor-pointer rounded-full hover:bg-surface-container-high transition-colors">3</div>
+                    <div
+                        class="p-2 cursor-pointer rounded-full hover:bg-surface-container-high transition-colors relative">
+                        4
+                        <div
+                            class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-secondary-container rounded-full"></div>
+                    </div>
+                    <!-- ... more days ... -->
+                    <!-- Today highlighted -->
+                    <div
+                        class="p-2 cursor-pointer rounded-full bg-secondary-container text-on-secondary-container font-bold relative flex items-center justify-center h-10 w-10 mx-auto">
+                        25
+                    </div>
+                    <!-- ... more days ... -->
+                    <div
+                        class="p-2 cursor-pointer rounded-full hover:bg-surface-container-high transition-colors">26</div>
+                    <div
+                        class="p-2 cursor-pointer rounded-full hover:bg-surface-container-high transition-colors">27</div>
+                    <div
+                        class="p-2 cursor-pointer rounded-full hover:bg-surface-container-high transition-colors">28</div>
+                    <div
+                        class="p-2 cursor-pointer rounded-full hover:bg-surface-container-high transition-colors">29</div>
+                    <div
+                        class="p-2 cursor-pointer rounded-full hover:bg-surface-container-high transition-colors">30</div>
+                    <div
+                        class="p-2 cursor-pointer rounded-full hover:bg-surface-container-high transition-colors">31</div>
+                    <div class="p-2 text-on-surface-variant opacity-50">1</div>
+                    <div class="p-2 text-on-surface-variant opacity-50">2</div>
+                </div>
+            </section>
+            <!-- Summary Card -->
+            <section
+                class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-lg shadow-sm">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <h3
+                            class="text-headline-md font-headline-md text-on-surface flex items-center gap-2">
+                            <span
+                                class="material-symbols-outlined text-primary">today</span>
+                            รายงานวันที่ 25 ตุลาคม 2023
+                        </h3>
+                    </div>
+                </div>
+                <div
+                    class="mt-stack-md flex flex-col items-center justify-center py-stack-lg text-center bg-surface-container-low rounded-lg border border-dashed border-outline-variant">
+                    <span
+                        class="material-symbols-outlined text-4xl text-on-surface-variant mb-2"
+                        style="font-variation-settings: 'FILL' 0;">description</span>
+                    <p
+                        class="text-body-lg font-body-lg text-on-surface-variant">รายงานวันนี้:
+                        ยังไม่ได้สร้าง</p>
+                    <button
+                        class="mt-stack-md bg-secondary-container text-on-secondary-container px-6 py-2 rounded-full font-label-md text-label-md flex items-center gap-2 hover:bg-opacity-90 transition-all">
+                        <span
+                            class="material-symbols-outlined text-sm">add</span>
+                        สร้างรายงานใหม่
+                    </button>
+                </div>
+            </section>
+        </main>
+        <!-- BottomNavBar (Mobile Only) -->
+        <nav
+            class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 bg-surface dark:bg-inverse-surface border-t border-outline-variant dark:border-outline"><!-- Home (Active) -->
+            <a
+                class="flex flex-col items-center justify-center bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary rounded-full px-4 py-1 scale-95 active:scale-90 transition-transform duration-150 w-3/4 max-w-[100px] h-12 shadow-sm"
+                href="#">
+                <span class="material-symbols-outlined"
+                    style="font-variation-settings: 'FILL' 1;">dashboard</span>
+                <span
+                    class="text-[10px] font-label-md mt-1 font-bold">Home</span>
+            </a>
+            <!-- Add Report (Inactive) -->
+            <a
+                class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant px-4 py-1 hover:bg-surface-container-high dark:hover:bg-surface-variant scale-95 active:scale-90 transition-transform duration-150 w-full h-full rounded-lg"
+                href="#">
+                <span class="material-symbols-outlined">add_circle</span>
+                <span class="text-[10px] font-label-md mt-1">Add Report</span>
+            </a>
+            <!-- Settings (Inactive) -->
+            <a
+                class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant px-4 py-1 hover:bg-surface-container-high dark:hover:bg-surface-variant scale-95 active:scale-90 transition-transform duration-150 w-full h-full rounded-lg"
+                href="#">
+                <span class="material-symbols-outlined">settings</span>
+                <span class="text-[10px] font-label-md mt-1">Settings</span>
+            </a></nav>
+    </body></html>
