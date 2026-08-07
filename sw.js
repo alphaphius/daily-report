@@ -1,4 +1,4 @@
-const CACHE_NAME = "dailyreport-v3";
+const CACHE_NAME = "dailyreport-v4";
 const ASSETS = [
   "./",
   "./index.html",
@@ -15,7 +15,7 @@ const ASSETS = [
   "./css/app.css",
   "./vendor/html2canvas.min.js",
   "./vendor/jspdf.umd.min.js",
-  "./vendor/sarabun-fonts.js",
+  "./vendor/anuphan-fonts.js",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
   "./icons/apple-touch-icon.png",

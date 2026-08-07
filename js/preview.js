@@ -120,11 +120,11 @@
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
 
-      Object.keys(window.SARABUN_FONTS || {}).forEach((name) => {
+      Object.keys(window.ANUphan_FONTS || {}).forEach((name) => {
         doc.addFileToVFS(name, window.SARABUN_FONTS[name]);
       });
-      doc.addFont("Sarabun-Regular.ttf", "Sarabun", "normal");
-      doc.addFont("Sarabun-Bold.ttf", "Sarabun", "bold");
+      doc.addFont("Anuphan-Regular.ttf", "Anuphan", "normal");
+      doc.addFont("Anuphan-Bold.ttf", "Anuphan", "bold");
 
       const M = 12, W = 210, H = 297, CW = W - 2 * M;
       const PRIMARY = [194, 101, 42], GRAY = [96, 88, 80], INK = [58, 48, 42], LINE = [216, 208, 200];
@@ -135,16 +135,16 @@
         if (y + h > H - M) {
           doc.addPage();
           y = M;
-          doc.setFont("Sarabun", "normal");
+          doc.setFont("Anuphan", "normal");
         }
       }
       function metaPair(label, value, lineY) {
-        doc.setFont("Sarabun", "normal");
+        doc.setFont("Anuphan", "normal");
         doc.setFontSize(10);
         doc.setTextColor.apply(doc, GRAY);
         const lw = doc.getTextWidth(label);
         doc.text(label, W - M, lineY, { align: "right" });
-        doc.setFont("Sarabun", "bold");
+        doc.setFont("Anuphan", "bold");
         doc.setTextColor.apply(doc, INK);
         doc.text(String(value || "—"), W - M - lw, lineY, { align: "right" });
       }
@@ -153,11 +153,11 @@
       try {
         doc.addImage(logoDataURL, mimeOf(logoDataURL), M, y - 1, 14, 14);
       } catch (e) { /* logo optional */ }
-      doc.setFont("Sarabun", "bold");
+      doc.setFont("Anuphan", "bold");
       doc.setFontSize(15);
       doc.setTextColor.apply(doc, PRIMARY);
       doc.text(DR.CONFIG.REPORT_TITLE, M + 18, y + 4);
-      doc.setFont("Sarabun", "normal");
+      doc.setFont("Anuphan", "normal");
       doc.setFontSize(10);
       doc.setTextColor.apply(doc, GRAY);
       doc.text(String(report.site || ""), M + 18, y + 9);
@@ -173,7 +173,7 @@
       y += 8;
 
       /* section: items */
-      doc.setFont("Sarabun", "bold");
+      doc.setFont("Anuphan", "bold");
       doc.setFontSize(12);
       doc.setTextColor.apply(doc, INK);
       doc.text("รายการปฏิบัติงาน", M, y);
@@ -182,7 +182,7 @@
       function drawHeader() {
         doc.setFillColor(246, 240, 232);
         doc.rect(M, y, CW, 8, "F");
-        doc.setFont("Sarabun", "bold");
+        doc.setFont("Anuphan", "bold");
         doc.setFontSize(10);
         doc.setTextColor.apply(doc, INK);
         doc.text("ลำดับ", M + 14 / 2, y + 5.6, { align: "center" });
@@ -200,7 +200,7 @@
         const noteLines = it.note ? doc.splitTextToSize(String(it.note), CW - 14 - 108 - 2 * pad) : [];
         const rowH = Math.max(8, detailLines.length * lh + 3, noteLines.length * lh + 3);
         ensureY(rowH);
-        doc.setFont("Sarabun", "normal");
+        doc.setFont("Anuphan", "normal");
         doc.setFontSize(10);
         doc.setTextColor.apply(doc, INK);
         doc.text(String(i + 1), M + 7, y + lh, { align: "center" });
@@ -214,14 +214,14 @@
       /* section: images (2 ต่อแถว / 6 ต่อหน้า) */
       y += 6;
       ensureY(24);
-      doc.setFont("Sarabun", "bold");
+      doc.setFont("Anuphan", "bold");
       doc.setFontSize(12);
       doc.setTextColor.apply(doc, INK);
       doc.text("ภาพประกอบ", M, y);
       y += 7;
 
       if (!images.length) {
-        doc.setFont("Sarabun", "normal");
+        doc.setFont("Anuphan", "normal");
         doc.setFontSize(10);
         doc.setTextColor.apply(doc, GRAY);
         doc.text("ไม่มีภาพประกอบ", M, y);
@@ -240,7 +240,7 @@
           try { doc.addImage(a.url, mimeOf(a.url), M, y, cw, aH); } catch (e) { /* skip bad image */ }
           if (b) { try { doc.addImage(b.url, mimeOf(b.url), M + cw + gap, y, cw, bH); } catch (e) {} }
           if (capA.length) {
-            doc.setFont("Sarabun", "normal");
+            doc.setFont("Anuphan", "normal");
             doc.setFontSize(8);
             doc.setTextColor.apply(doc, GRAY);
             doc.text(capA, M + capPad, y + aH + 3.5);
@@ -256,7 +256,7 @@
       const total = doc.getNumberOfPages();
       for (let p = 1; p <= total; p++) {
         doc.setPage(p);
-        doc.setFont("Sarabun", "normal");
+        doc.setFont("Anuphan", "normal");
         doc.setFontSize(8);
         doc.setTextColor.apply(doc, GRAY);
         doc.text("DailyReport - " + report.date, M, H - 6);

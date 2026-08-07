@@ -10,7 +10,7 @@
 // จากนั้นคัดลอก URL ไปวางที่ API_URL ด้านล่าง
 // ============================================================
 window.CONFIG = {
-  API_URL: "https://script.google.com/macros/s/AKfycbwB9u6N4E7tO0_SQBfvWHdAFOS0qGxIxH0tHHngLrUl75HhTkvCfCi-J2QbINd36Dxu/exec",
+  API_URL: "https://script.google.com/macros/s/AKfycbw4O3dkUqzUjVSlDTUNM9V_H7RCK11jUjmC9j86GKSg6XFV8-SMM5eDcXQjM7ic2o9o/exec",
 
   // ที่อยู่ logo (ถ้าต้องการเปลี่ยนก็แก้ตรงนี้)
   LOGO_URL: "https://cdn-icons-png.flaticon.com/128/9824/9824404.png",

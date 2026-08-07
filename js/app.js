@@ -194,6 +194,12 @@
     }
   }
 
+  /* ---------- Page load: keep scroll position stable ----------
+     Opens every page at the top so the bottom nav / content never
+     appears shifted when switching tabs. */
+  if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+  window.addEventListener("pageshow", function () { window.scrollTo(0, 0); });
+
   /* ---------- Export shared API ---------- */
   window.DR = {
     CONFIG: CONFIG,

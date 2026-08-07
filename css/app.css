@@ -7,9 +7,11 @@ html {
 }
 
 body {
-  font-family: 'Hanken Grotesk', system-ui, sans-serif;
+  font-family: 'Anuphan', 'Hanken Grotesk', system-ui, sans-serif;
   background-color: #faf5ee;
   color: #3a302a;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 .material-symbols-outlined {
@@ -90,6 +92,73 @@ body {
 
 /* Hide scrollbar helper for doc wrapper on mobile */
 .doc-scale-wrap { overflow-x: auto; }
+
+/* ============================================================
+   Bottom navigation (Material 3 style, stable equal-width cells)
+   ============================================================ */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  background: #faf5ee;
+  border-top: 1px solid #d8d0c8;
+  padding-bottom: env(safe-area-inset-bottom);
+  box-shadow: 0 -6px 20px rgba(58, 48, 42, 0.05);
+}
+.bottom-nav .bottom-nav-inner {
+  max-width: 480px;
+  margin: 0 auto;
+  height: 64px;
+  display: flex;
+  align-items: stretch;
+  justify-content: space-around;
+}
+.bottom-nav a {
+  flex: 1 1 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  color: #605850;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.2s ease;
+}
+.bottom-nav a .material-symbols-outlined {
+  font-size: 24px;
+  transition: transform 0.2s ease;
+}
+.bottom-nav a .nav-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+}
+.bottom-nav a.active {
+  color: #c2652a;
+}
+.bottom-nav a.active .material-symbols-outlined {
+  font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+  transform: translateY(-1px);
+}
+.bottom-nav a.active .nav-label {
+  font-weight: 700;
+}
+.bottom-nav a.active::before {
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 3px;
+  border-radius: 9999px;
+  background: #c2652a;
+}
 
 /* Spinner */
 .spinner {
