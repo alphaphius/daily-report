@@ -173,7 +173,7 @@ function getCalendar(year, month) {
   var prefix = String(year) + "-" + pad2(month);
   var dates = [];
   for (var i = 1; i < vals.length; i++) {
-    var d = String(vals[i][0]);
+    var d = normDate(vals[i][0]);
     if (d && d.indexOf(prefix) === 0) dates.push(d);
   }
   return dates;
@@ -186,7 +186,7 @@ function getReport(date) {
   var sh = getSpreadsheet().getSheetByName("Reports");
   var vals = sh.getDataRange().getValues();
   for (var i = 1; i < vals.length; i++) {
-    if (String(vals[i][0]) === String(date)) {
+    if (normDate(vals[i][0]) === String(date)) {
       try { return JSON.parse(vals[i][1]); } catch (e) { return null; }
     }
   }
@@ -196,7 +196,7 @@ function getReport(date) {
 function findRow(sh, date) {
   var vals = sh.getDataRange().getValues();
   for (var i = 1; i < vals.length; i++) {
-    if (String(vals[i][0]) === String(date)) return i + 1;
+    if (normDate(vals[i][0]) === String(date)) return i + 1;
   }
   return null;
 }
@@ -308,4 +308,11 @@ function getImage(id) {
 function pad2(n) {
   n = Number(n);
   return n < 10 ? "0" + n : String(n);
+}
+
+function normDate(v) {
+  if (v instanceof Date) {
+    return Utilities.formatDate(v, Session.getScriptTimeZone(), "yyyy-MM-dd");
+  }
+  return String(v);
 }
