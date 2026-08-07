@@ -200,3 +200,14 @@ body {
     animation-iteration-count: infinite !important;
   }
 }
+
+/* ------------------------------------------------------------------
+   Hidden state must always win over custom display rules below
+   (e.g. .modal-backdrop{display:flex}, .spinner{display:inline-block})
+   which would otherwise override Tailwind's .hidden since app.css is
+   loaded after tailwind.css with equal specificity.
+   ------------------------------------------------------------------ */
+.hidden,
+[hidden] {
+  display: none !important;
+}

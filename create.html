@@ -60,9 +60,10 @@
         </div>
         <div class="flex flex-col gap-1 md:col-span-2">
           <label class="text-label-md font-label-md text-on-surface-variant" for="f-endtime">เวลาเลิกงาน</label>
-          <select id="f-endtime" class="w-full h-touch-target-min border-outline-variant rounded-lg bg-surface focus:border-primary focus:ring-1 focus:ring-primary text-body-md font-body-md px-3">
-            <option value="">เลือกเวลาเลิกงาน</option>
-          </select>
+          <input id="f-endtime" type="text" list="endtime-options" placeholder="เลือกจากรายการ หรือพิมพ์เอง (เช่น 17:00)"
+            class="w-full h-touch-target-min border-outline-variant rounded-lg bg-surface focus:border-primary focus:ring-1 focus:ring-primary text-body-md font-body-md px-3" />
+          <datalist id="endtime-options"></datalist>
+          <p class="text-label-md font-label-md text-on-surface-variant">เลือกจากตัวเลือกที่ตั้งไว้ หรือพิมพ์เวลาเองได้ เช่น 16:45</p>
         </div>
       </div>
     </div>
@@ -137,7 +138,7 @@
       </a>
       <a href="search.html">
         <span class="material-symbols-outlined">search</span>
-        <span class="nav-label">ค้นหา</span>
+        <span class="nav-label">รายงาน</span>
       </a>
       <a href="create.html" class="active" aria-current="page">
         <span class="material-symbols-outlined filled">add_circle</span>

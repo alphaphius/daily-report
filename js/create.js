@@ -67,8 +67,9 @@
     refs.site.innerHTML = '<option value="">เลือกไซต์งาน</option>' +
       (s.sites || []).map((x) => '<option value="' + DR.escapeHtml(x.name || x) + '">' + DR.escapeHtml(x.name || x) + "</option>").join("");
     const times = (s.endTimes && s.endTimes.length) ? s.endTimes : [s.defaultEndTime || "17:00"];
-    refs.endTime.innerHTML = '<option value="">เลือกเวลาเลิกงาน</option>' +
-      times.map((t) => '<option value="' + DR.escapeHtml(t) + '">' + DR.escapeHtml(t) + "</option>").join("");
+    const dl = $("#endtime-options");
+    dl.innerHTML = times.map((t) => '<option value="' + DR.escapeHtml(t) + '"></option>').join("");
+    refs.endTime.value = s.defaultEndTime || "";
   }
 
   async function loadExisting() {

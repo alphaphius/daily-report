@@ -10,7 +10,7 @@
   <link rel="manifest" href="./manifest.json" />
   <link rel="icon" type="image/png" href="./icons/icon-192.png" />
   <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-  <title>ค้นหารายงาน - DailyReport</title>
+  <title>รายงาน - DailyReport</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -37,8 +37,33 @@
 
   <main class="px-margin-mobile md:px-margin-desktop py-stack-lg max-w-4xl mx-auto space-y-stack-lg">
     <section class="flex flex-col gap-stack-sm">
-      <h2 class="text-headline-lg-mobile md:text-headline-lg font-headline-lg-mobile md:font-headline-lg">ค้นหารายงาน</h2>
-      <p class="text-body-md font-body-md text-on-surface-variant">ค้นหาจากรายการ, หมายเหตุ, กลุ่มงาน หรือไซต์งาน</p>
+      <h2 class="text-headline-lg-mobile md:text-headline-lg font-headline-lg-mobile md:font-headline-lg">รายงาน</h2>
+      <p class="text-body-md font-body-md text-on-surface-variant">ดูรายงานล่าสุด หรือค้นหาจากรายการ/หมายเหตุ/กลุ่มงาน/ไซต์งาน</p>
+    </section>
+
+    <!-- Day-window pagination -->
+    <section id="range-card" class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md shadow-sm">
+      <div class="flex items-center justify-between gap-3 mb-3">
+        <h3 class="text-headline-md font-headline-md text-on-surface flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary">date_range</span>
+          <span>ช่วงวันที่แสดง</span>
+        </h3>
+        <div class="flex gap-2">
+          <button id="page-prev" type="button" aria-label="ช่วงก่อนหน้า" class="w-11 h-11 flex items-center justify-center rounded-full hover:bg-surface-container transition-colors disabled:opacity-40 disabled:pointer-events-none"><span class="material-symbols-outlined text-on-surface-variant" aria-hidden="true">chevron_left</span></button>
+          <button id="page-next" type="button" aria-label="ช่วงถัดไป (เก่ากว่า)" class="w-11 h-11 flex items-center justify-center rounded-full hover:bg-surface-container transition-colors"><span class="material-symbols-outlined text-on-surface-variant" aria-hidden="true">chevron_right</span></button>
+        </div>
+      </div>
+      <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
+        <label class="flex items-center gap-2 text-label-md font-label-md text-on-surface-variant">
+          แสดงครั้งละ
+          <select id="page-size" class="h-10 px-3 rounded-lg border border-outline-variant bg-surface text-on-background text-body-md font-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none">
+            <option value="10">10 วัน</option>
+            <option value="15" selected>15 วัน</option>
+            <option value="30">30 วัน</option>
+          </select>
+        </label>
+        <span id="page-label" class="text-label-md font-label-md text-primary font-bold">—</span>
+      </div>
     </section>
 
     <!-- Search Box -->
@@ -54,10 +79,10 @@
       </form>
     </section>
 
-    <!-- Results (Deck) -->
+    <!-- Results -->
     <section id="results-wrap">
       <div id="results-hint" class="text-center text-body-md font-body-md text-on-surface-variant py-10">
-        พิมพ์คำค้นหาเพื่อดูรายงานที่เกี่ยวข้อง
+        กำลังโหลดรายงานล่าสุด...
       </div>
       <div id="results" class="flex flex-col gap-4"></div>
     </section>
@@ -72,7 +97,7 @@
       </a>
       <a href="search.html" class="active" aria-current="page">
         <span class="material-symbols-outlined filled">search</span>
-        <span class="nav-label">ค้นหา</span>
+        <span class="nav-label">รายงาน</span>
       </a>
       <a href="create.html">
         <span class="material-symbols-outlined">add_circle</span>

@@ -1,37 +1,106 @@
-/* Search page: find reports across items / notes, show as a deck sorted by date desc */
+/* Reports page: browse all reports sorted by date (paginated by day windows) + optional search */
 (function () {
   const DR = window.DR;
   const $ = DR.$;
 
-  async function runSearch(query) {
-    const q = String(query || "").trim();
-    const hint = $("#results-hint");
-    const results = $("#results");
-    if (!q) {
-      hint.classList.remove("hidden");
-      results.innerHTML = "";
-      return;
-    }
-    const btn = $("#search-btn");
-    DR.setLoading(btn, true, "กำลังค้นหา...");
+  const state = {
+    pageSize: 15,       // 10 / 15 / 30 days per window
+    pageIndex: 0,       // 0 = most recent window
+    searchMode: false
+  };
+
+  const IDS = {
+    rangeCard: "#range-card",
+    size: "#page-size",
+    prev: "#page-prev",
+    next: "#page-next",
+    label: "#page-label",
+    form: "#search-form",
+    input: "#search-input",
+    btn: "#search-btn",
+    hint: "#results-hint",
+    results: "#results"
+  };
+
+  function shift(str, days) {
+    const d = DR.parseDate(str);
+    d.setDate(d.getDate() + days);
+    return DR.dateStr(d);
+  }
+
+  function windowDates() {
+    const end = shift(DR.todayStr(), -state.pageIndex * state.pageSize);
+    const start = shift(end, -(state.pageSize - 1));
+    return { start: start, end: end };
+  }
+
+  function fmtRange(start, end) {
+    if (start === end) return DR.fmtThai(start, { day: true });
+    return DR.fmtThai(start) + " – " + DR.fmtThai(end, { day: true });
+  }
+
+  async function loadWindow() {
+    const { start, end } = windowDates();
+    $(IDS.label).textContent = fmtRange(start, end);
+    $(IDS.prev).disabled = state.pageIndex === 0;
+    $(IDS.hint).classList.add("hidden");
+    const results = $(IDS.results);
+    results.innerHTML =
+      '<div class="flex items-center justify-center gap-3 py-10 text-on-surface-variant"><div class="spinner"></div><span class="text-label-md font-label-md">กำลังโหลดรายงาน...</span></div>';
     try {
-      const r = await DR.API.searchReports(q);
+      const r = await DR.API.getReportsByRange(start, end);
       const reports = r.reports || [];
-      hint.classList.add("hidden");
       if (!reports.length) {
-        results.innerHTML = '<p class="text-center text-body-md font-body-md text-on-surface-variant py-10">ไม่พบรายงานที่ตรงกับ "' + DR.escapeHtml(q) + '"</p>';
+        results.innerHTML =
+          '<p class="text-center text-body-md font-body-md text-on-surface-variant py-10">ไม่มีรายงานในช่วงวันที่นี้</p>' +
+          (state.pageIndex > 0 ? '<p class="text-center text-label-md font-label-md text-on-surface-variant pb-6">กดปุ่มลูกศรขวา "ช่วงถัดไป" เพื่อดูช่วงวันที่ที่เก่ากว่าอีก</p>' : "");
         return;
       }
-      const total = reports.reduce((n, r) => n + (r.items || []).length, 0);
+      const total = reports.reduce((n, x) => n + (x.items || []).length, 0);
       results.innerHTML =
         '<p class="text-label-md font-label-md text-on-surface-variant">พบ ' + reports.length + " รายงาน (" + total + " รายการ)</p>" +
         reports.map(renderCard).join("");
     } catch (e) {
-      hint.classList.add("hidden");
-      results.innerHTML = '<p class="text-center text-body-md font-body-md text-error py-10">ค้นหาไม่สำเร็จ: ' + DR.escapeHtml(e.message) + "</p>";
-    } finally {
-      DR.setLoading(btn, false);
+      results.innerHTML =
+        '<p class="text-center text-body-md font-body-md text-error py-10">โหลดไม่สำเร็จ: ' + DR.escapeHtml(e.message) + "</p>";
     }
+  }
+
+  async function runSearch(q) {
+    state.searchMode = true;
+    $(IDS.rangeCard).classList.add("hidden");
+    $(IDS.hint).classList.add("hidden");
+    const results = $(IDS.results);
+    DR.setLoading($(IDS.btn), true, "กำลังค้นหา...");
+    try {
+      const r = await DR.API.searchReports(q);
+      const reports = r.reports || [];
+      if (!reports.length) {
+        results.innerHTML =
+          '<p class="text-center text-body-md font-body-md text-on-surface-variant py-10">ไม่พบรายงานที่ตรงกับ "' + DR.escapeHtml(q) + '"</p>';
+        return;
+      }
+      const total = reports.reduce((n, x) => n + (x.items || []).length, 0);
+      results.innerHTML =
+        '<div class="flex flex-wrap items-center justify-between gap-2 mb-2">' +
+        '<p class="text-label-md font-label-md text-on-surface-variant">ผลการค้นหา "' + DR.escapeHtml(q) + '" — ' + reports.length + " รายงาน (" + total + " รายการ)</p>" +
+        '<button id="back-to-browse" type="button" class="inline-flex items-center gap-1 text-primary text-label-md font-label-md hover:underline px-2 py-1"><span class="material-symbols-outlined text-base" aria-hidden="true">arrow_back</span> กลับสู่รายการรายงาน</button>' +
+        "</div>" +
+        reports.map(renderCard).join("");
+      $("#back-to-browse").addEventListener("click", backToBrowse);
+    } catch (e) {
+      results.innerHTML =
+        '<p class="text-center text-body-md font-body-md text-error py-10">ค้นหาไม่สำเร็จ: ' + DR.escapeHtml(e.message) + "</p>";
+    } finally {
+      DR.setLoading($(IDS.btn), false);
+    }
+  }
+
+  function backToBrowse() {
+    state.searchMode = false;
+    $(IDS.input).value = "";
+    $(IDS.rangeCard).classList.remove("hidden");
+    loadWindow();
   }
 
   function renderCard(r) {
@@ -70,9 +139,26 @@
   document.addEventListener("DOMContentLoaded", () => {
     DR.registerSW();
     DR.loadLogo().then((src) => { $("#app-logo").src = src; });
+
+    $("#page-size").addEventListener("change", (e) => {
+      state.pageSize = Number(e.target.value);
+      state.pageIndex = 0;
+      loadWindow();
+    });
+    $("#page-prev").addEventListener("click", () => {
+      if (state.pageIndex > 0) { state.pageIndex--; loadWindow(); }
+    });
+    $("#page-next").addEventListener("click", () => {
+      state.pageIndex++;
+      loadWindow();
+    });
     $("#search-form").addEventListener("submit", (e) => {
       e.preventDefault();
-      runSearch($("#search-input").value);
+      const q = $("#search-input").value.trim();
+      if (q) runSearch(q);
+      else if (state.searchMode) backToBrowse();
     });
+
+    loadWindow();
   });
 })();
