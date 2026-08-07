@@ -37,10 +37,10 @@
     <div class="flex flex-col items-center mb-stack-lg">
       <img id="app-logo" alt="Logo" class="w-20 h-20 mb-4 object-contain rounded-sm shadow-sm border border-outline-variant" src="icons/logo.png" />
       <h2 class="text-headline-lg-mobile md:text-headline-lg font-headline-lg-mobile md:font-headline-lg text-primary text-center">สร้างรายงานประจำวัน</h2>
-      <div id="date-pill" class="mt-2 px-4 py-2 bg-secondary-fixed rounded-full inline-flex items-center gap-2 border border-secondary-fixed-dim">
-        <span class="material-symbols-outlined text-on-secondary-fixed text-sm">calendar_today</span>
-        <span class="text-label-md font-label-md text-on-secondary-fixed" id="date-pill-text">—</span>
-      </div>
+      <label class="mt-2 px-4 py-2 bg-secondary-fixed rounded-full inline-flex items-center gap-2 border border-secondary-fixed-dim" aria-label="เลือกวันที่">
+        <span class="material-symbols-outlined text-on-secondary-fixed text-sm" aria-hidden="true">calendar_today</span>
+        <input id="f-date" type="date" class="bg-transparent text-label-md font-label-md text-on-secondary-fixed outline-none text-center" />
+      </label>
     </div>
 
     <!-- Form Section -->
@@ -60,10 +60,11 @@
         </div>
         <div class="flex flex-col gap-1 md:col-span-2">
           <label class="text-label-md font-label-md text-on-surface-variant" for="f-endtime">เวลาเลิกงาน</label>
-          <input id="f-endtime" type="text" list="endtime-options" placeholder="เลือกจากรายการ หรือพิมพ์เอง (เช่น 17:00)"
+          <input id="f-endtime" type="text" list="endtime-options" placeholder="เลือกจากตัวเลือก หรือพิมพ์เอง (เช่น 17:00)"
             class="w-full h-touch-target-min border-outline-variant rounded-lg bg-surface focus:border-primary focus:ring-1 focus:ring-primary text-body-md font-body-md px-3" />
           <datalist id="endtime-options"></datalist>
-          <p class="text-label-md font-label-md text-on-surface-variant">เลือกจากตัวเลือกที่ตั้งไว้ หรือพิมพ์เวลาเองได้ เช่น 16:45</p>
+          <div class="flex flex-wrap gap-2" id="endtime-chips"></div>
+          <p class="text-label-md font-label-md text-on-surface-variant">แตะเวลาในรายการเพื่อเลือก หรือพิมพ์เวลาเอง เช่น 16:45</p>
         </div>
       </div>
     </div>
@@ -121,7 +122,11 @@
     </div>
 
     <!-- Action -->
-    <div class="flex justify-end pt-4 pb-8 md:pb-4 border-t border-outline-variant">
+    <div class="flex justify-end pt-4 pb-8 md:pb-4 border-t border-outline-variant gap-3">
+      <button id="btn-del-report" type="button" class="hidden flex items-center justify-center gap-2 h-touch-target-min bg-error text-white font-label-md text-label-md rounded-lg px-6 transition-colors shadow-sm">
+        <span class="material-symbols-outlined">delete</span>
+        ลบรายงานนี้
+      </button>
       <button id="btn-save" class="w-full md:w-auto h-touch-target-min bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md rounded-lg px-8 flex items-center justify-center gap-2 transition-colors shadow-sm">
         <span class="material-symbols-outlined">save</span>
         บันทึกรายงาน

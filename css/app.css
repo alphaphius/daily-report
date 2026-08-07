@@ -201,6 +201,13 @@ body {
   }
 }
 
+/* Time quick-select chips (create page) */
+.endtime-chip.selected {
+  background: #c2652a;
+  color: #ffffff;
+  border-color: #c2652a;
+}
+
 /* ------------------------------------------------------------------
    Hidden state must always win over custom display rules below
    (e.g. .modal-backdrop{display:flex}, .spinner{display:inline-block})

@@ -8,7 +8,8 @@
     settings: { workGroups: [], sites: [], endTimes: [], defaultEndTime: "17:00" },
     items: [],
     images: [], // {dataUrl, caption, fileId}
-    editIndex: null
+    editIndex: null,
+    hasExisting: false
   };
 
   const refs = {
@@ -29,7 +30,7 @@
   async function init() {
     const qs = new URLSearchParams(location.search);
     state.reportDate = qs.get("date") || DR.todayStr();
-    $("#date-pill-text").textContent = DR.fmtThaiLong(state.reportDate);
+    $("#f-date").value = state.reportDate;
     document.title = "สร้างรายงาน " + DR.fmtThai(state.reportDate) + " - DailyReport";
 
     try {
@@ -58,6 +59,26 @@
       });
     });
     refs.saveBtn.addEventListener("click", save);
+    $("#btn-del-report").addEventListener("click", deleteReport);
+    $("#endtime-chips").addEventListener("click", (e) => {
+      const b = e.target.closest("[data-endtime]");
+      if (!b) return;
+      refs.endTime.value = b.dataset.endtime;
+      syncChips();
+    });
+    refs.endTime.addEventListener("input", syncChips);
+    $("#f-date").addEventListener("change", (e) => {
+      const newDate = e.target.value;
+      if (!newDate || newDate === state.reportDate) return;
+      if ((state.items.length || state.images.length) &&
+        !confirm("เปลี่ยนวันที่? ข้อมูลและรูปที่กรอกไว้ของวันที่เดิมจะถูกล้าง")) {
+        e.target.value = state.reportDate;
+        return;
+      }
+      state.reportDate = newDate;
+      document.title = "สร้างรายงาน " + DR.fmtThai(newDate) + " - DailyReport";
+      loadExisting();
+    });
   }
 
   function populateSelects() {
@@ -70,13 +91,41 @@
     const dl = $("#endtime-options");
     dl.innerHTML = times.map((t) => '<option value="' + DR.escapeHtml(t) + '"></option>').join("");
     refs.endTime.value = s.defaultEndTime || "";
+    renderEndTimeChips();
+    syncChips();
+  }
+
+  function renderEndTimeChips() {
+    const times = (state.settings.endTimes && state.settings.endTimes.length) ? state.settings.endTimes : [state.settings.defaultEndTime || "17:00"];
+    const chips = $("#endtime-chips");
+    chips.innerHTML = times.map((t) =>
+      '<button type="button" data-endtime="' + DR.escapeHtml(t) + '" class="endtime-chip px-4 h-10 rounded-full border border-outline-variant bg-surface-container text-on-surface text-label-md font-label-md hover:border-primary hover:text-primary transition-colors">' +
+      DR.escapeHtml(t) + "</button>").join("");
+  }
+
+  function syncChips() {
+    const v = refs.endTime.value;
+    $$("#endtime-chips [data-endtime]").forEach((b) => {
+      b.classList.toggle("selected", b.dataset.endtime === v);
+    });
   }
 
   async function loadExisting() {
+    state.hasExisting = false;
+    state.items = [];
+    state.images = [];
+    refs.group.value = "";
+    refs.site.value = "";
+    refs.endTime.value = state.settings.defaultEndTime || "";
+    renderItems();
+    renderImages();
+    renderActionButtons();
+    syncChips();
     try {
       const r = await DR.API.getReport(state.reportDate);
       const rep = r.report;
       if (!rep || !Array.isArray(rep.items)) return;
+      state.hasExisting = true;
       refs.group.value = rep.workGroup || "";
       refs.site.value = rep.site || "";
       refs.endTime.value = rep.endTime || "";
@@ -87,10 +136,16 @@
         state.images.push({ fileId: imgs[i].fileId, caption: imgs[i].caption || "", dataUrl: null });
       }
       renderImages();
+      renderActionButtons();
+      syncChips();
       loadImageDataURLs();
     } catch (e) {
       DR.toast("ไม่สามารถโหลดรายงานเดิมได้: " + e.message, "error");
     }
+  }
+
+  function renderActionButtons() {
+    $("#btn-del-report").classList.toggle("hidden", !state.hasExisting);
   }
 
   async function loadImageDataURLs() {
@@ -223,6 +278,27 @@
         state.images[Number(inp.dataset.imgCaption)].caption = inp.value.trim();
       });
     });
+  }
+
+  /* ---------- delete whole report ---------- */
+  async function deleteReport() {
+    if (!confirm("ลบรายงานวันที่ " + DR.fmtThaiLong(state.reportDate) + " ทั้งหมด?\nรูปถ่ายจะถูกลบด้วย และไม่สามารถย้อนกลับได้")) return;
+    try {
+      await DR.API.deleteReport(state.reportDate);
+      DR.toast("ลบรายงานแล้ว", "success");
+      state.hasExisting = false;
+      state.items = [];
+      state.images = [];
+      refs.group.value = "";
+      refs.site.value = "";
+      refs.endTime.value = state.settings.defaultEndTime || "";
+      renderItems();
+      renderImages();
+      renderActionButtons();
+      syncChips();
+    } catch (e) {
+      DR.toast("ลบไม่สำเร็จ: " + e.message, "error");
+    }
   }
 
   /* ---------- save ---------- */

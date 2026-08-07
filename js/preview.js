@@ -32,6 +32,7 @@
 
       $("#btn-image").addEventListener("click", exportImage);
       $("#btn-pdf").addEventListener("click", exportPDF);
+      $("#btn-del-preview").addEventListener("click", deletePreviewReport);
 
       imagesReady = loadImages();
     } catch (e) {
@@ -242,6 +243,16 @@
     } finally {
       DR.setLoading(btn, false);
     }
+  }
+
+  function deletePreviewReport() {
+    if (!confirm("ลบรายงานวันที่ " + DR.fmtThaiLong(report.date) + " ทั้งหมด?\nรูปถ่ายจะถูกลบด้วย และไม่สามารถย้อนกลับได้")) return;
+    DR.API.deleteReport(report.date)
+      .then(() => {
+        DR.toast("ลบรายงานแล้ว", "success");
+        setTimeout(() => { location.href = "index.html"; }, 900);
+      })
+      .catch((e) => DR.toast("ลบไม่สำเร็จ: " + e.message, "error"));
   }
 
   /* ================= Export: PDF (ส่งออกเป็น PDF) ================= */

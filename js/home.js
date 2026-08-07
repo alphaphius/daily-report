@@ -211,15 +211,32 @@
       '<div id="sum-images" class="w-full flex flex-col gap-3"></div>' +
 
       '<div class="w-full flex flex-col sm:flex-row gap-3 justify-end mt-2">' +
+      '<button id="btn-del-summary" type="button" class="inline-flex items-center justify-center gap-2 px-6 py-3 border-2 border-error text-error rounded-full hover:bg-error-container transition-colors text-label-md font-label-md">' +
+      '<span class="material-symbols-outlined text-sm">delete</span> ลบรายงาน</button>' +
       '<a href="create.html?date=' + selectedDate + '" class="inline-flex items-center justify-center gap-2 px-6 py-3 border-2 border-primary text-primary rounded-full hover:bg-primary/5 transition-colors text-label-md font-label-md">' +
       '<span class="material-symbols-outlined text-sm">edit</span> แก้ไขรายงาน</a>' +
       '<a href="preview.html?date=' + selectedDate + '" class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary text-on-primary rounded-full hover:bg-primary-container transition-colors shadow-sm text-label-md font-label-md">' +
       '<span class="material-symbols-outlined text-sm">description</span> ดูและส่งออกรายงาน</a>' +
       "</div>";
 
+    const delBtn = $("#btn-del-summary");
+    if (delBtn) delBtn.addEventListener("click", deleteSummaryReport);
+
     if (!imgCount) {
       $("#sum-images").innerHTML = "";
     }
+  }
+
+  function deleteSummaryReport() {
+    if (!confirm("ลบรายงานวันที่ " + DR.fmtThaiLong(selectedDate) + " ทั้งหมด?\nรูปถ่ายจะถูกลบด้วย และไม่สามารถย้อนกลับได้")) return;
+    DR.API.deleteReport(selectedDate)
+      .then(() => {
+        DR.toast("ลบรายงานแล้ว", "success");
+        reportDates.delete(selectedDate);
+        renderCalendar();
+        loadSummary();
+      })
+      .catch((e) => DR.toast("ลบไม่สำเร็จ: " + e.message, "error"));
   }
 
   async function loadSummaryImages() {
