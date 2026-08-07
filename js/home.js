@@ -122,9 +122,12 @@
       } else {
         cls.push("hover:bg-surface-container-high");
       }
-      html += '<div class="p-2 cursor-pointer rounded-full transition-colors relative flex items-center justify-center h-10 w-10 mx-auto ' + cls.join(" ") + '" data-date="' + ds + '">' + day +
-        (hasReport ? '<div class="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full ' + (isSelected ? "bg-on-primary" : "bg-primary") + '"></div>' : "") +
-        "</div>";
+      const label = DR.fmtThai(ds, { day: true }) + (hasReport ? " มีรายงาน" : "");
+      html += '<button type="button" data-date="' + ds + '" aria-label="' + label + '"' +
+        (isSelected ? ' aria-current="date"' : "") +
+        ' class="w-10 h-10 mx-auto p-0 rounded-full transition-colors relative flex items-center justify-center border-0 bg-transparent cursor-pointer ' + cls.join(" ") + '">' + day +
+        (hasReport ? '<span aria-hidden="true" class="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full ' + (isSelected ? "bg-on-primary" : "bg-primary") + '"></span>' : "") +
+        "</button>";
     }
 
     // trailing cells
@@ -167,10 +170,10 @@
     if (!summaryReport) {
       body.className = "flex flex-col items-center justify-center py-stack-lg text-center bg-surface-container-low rounded-lg border border-dashed border-outline-variant";
       body.innerHTML =
-        '<span class="material-symbols-outlined text-4xl text-on-surface-variant mb-2">description</span>' +
-        '<p class="text-body-lg font-body-lg text-on-surface-variant">รายงานวันนี้: ยังไม่ได้สร้าง</p>' +
+        '<span class="material-symbols-outlined text-4xl text-on-surface-variant mb-2" aria-hidden="true">description</span>' +
+        '<p class="text-body-lg font-body-lg text-on-surface-variant">ยังไม่มีรายงานสำหรับวันที่นี้</p>' +
         '<a href="create.html?date=' + selectedDate + '" class="mt-stack-md bg-secondary-container text-on-secondary-container px-6 py-2 rounded-full font-label-md text-label-md flex items-center gap-2 hover:opacity-90 transition-all">' +
-        '<span class="material-symbols-outlined text-sm">add</span> สร้างรายงานใหม่</a>';
+        '<span class="material-symbols-outlined text-sm" aria-hidden="true">add</span> สร้างรายงานใหม่</a>';
       return;
     }
 
@@ -224,24 +227,36 @@
     if (!list || !summaryReport) return;
     const recs = (summaryReport.images || []).slice();
     if (!recs.length) { list.innerHTML = ""; return; }
-    list.innerHTML = '<div class="spinner"></div>';
-    let html = "";
-    for (let i = 0; i < recs.length; i++) {
-      const rec = recs[i];
-      try {
-        const url = await DR.API.getImage(rec.fileId);
-        html += '<div class="w-full overflow-hidden rounded-lg border border-outline-variant bg-surface-container-low">' +
-          '<img src="' + url + '" class="w-full h-auto block" alt="รูป ' + (i + 1) + '" />' +
-          (rec.caption ? '<div class="p-2 text-label-md font-label-md text-on-surface-variant">' + DR.escapeHtml(rec.caption) + "</div>" : "") +
-          "</div>";
-      } catch (e) { /* skip broken image */ }
+    list.innerHTML =
+      '<div class="flex items-center gap-3 text-label-md font-label-md text-on-surface-variant py-2">' +
+      '<div class="spinner"></div><span class="img-progress">กำลังโหลดรูป 0/' + recs.length + "</span></div>";
+
+    let done = 0;
+    await DR.mapLimit(recs, 4, async (rec, i) => {
+      const url = await DR.API.getImage(rec.fileId);
+      done++;
+      if (!list.isConnected) return;
+      const p = list.querySelector(".img-progress");
+      if (p) p.textContent = "กำลังโหลดรูป " + Math.min(done, recs.length) + "/" + recs.length;
+      const card = document.createElement("div");
+      card.className = "w-full overflow-hidden rounded-lg border border-outline-variant bg-surface-container-low";
+      card.innerHTML = '<img src="' + url + '" class="w-full h-auto block" alt="รูป ' + (i + 1) + '" loading="lazy" />' +
+        (rec.caption ? '<div class="p-2 text-label-md font-label-md text-on-surface-variant">' + DR.escapeHtml(rec.caption) + "</div>" : "");
+      list.appendChild(card);
+    });
+
+    const spinner = list.querySelector(".spinner");
+    if (spinner) spinner.remove();
+    const p = list.querySelector(".img-progress");
+    if (p) p.remove();
+    if (!list.querySelectorAll("img").length) {
+      list.innerHTML = '<p class="text-label-md font-label-md text-on-surface-variant">โหลดรูปไม่สำเร็จ</p>';
     }
-    list.innerHTML = html || '<p class="text-label-md font-label-md text-on-surface-variant">โหลดรูปไม่สำเร็จ</p>';
   }
 
   function statRow(icon, label, value) {
     return '<div class="flex items-center gap-3 bg-white border border-outline-variant rounded-lg px-4 py-3">' +
-      '<span class="material-symbols-outlined text-primary">' + icon + "</span>" +
+      '<span class="material-symbols-outlined text-primary" aria-hidden="true">' + icon + "</span>" +
       '<div class="flex flex-col"><span class="text-label-md font-label-md text-on-surface-variant">' + DR.escapeHtml(label) + "</span>" +
       '<span class="text-data-tabular font-data-tabular text-on-surface font-bold">' + DR.escapeHtml(value) + "</span></div></div>";
   }

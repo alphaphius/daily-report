@@ -22,7 +22,10 @@
         results.innerHTML = '<p class="text-center text-body-md font-body-md text-on-surface-variant py-10">ไม่พบรายงานที่ตรงกับ "' + DR.escapeHtml(q) + '"</p>';
         return;
       }
-      results.innerHTML = reports.map(renderCard).join("");
+      const total = reports.reduce((n, r) => n + (r.items || []).length, 0);
+      results.innerHTML =
+        '<p class="text-label-md font-label-md text-on-surface-variant">พบ ' + reports.length + " รายงาน (" + total + " รายการ)</p>" +
+        reports.map(renderCard).join("");
     } catch (e) {
       hint.classList.add("hidden");
       results.innerHTML = '<p class="text-center text-body-md font-body-md text-error py-10">ค้นหาไม่สำเร็จ: ' + DR.escapeHtml(e.message) + "</p>";

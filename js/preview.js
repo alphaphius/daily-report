@@ -6,6 +6,7 @@
   let report = null;
   let images = []; // {url, mime, w, h, caption}
   let logoDataURL = "";
+  let imagesReady = Promise.resolve();
   const PAGE_W = 794, PAGE_H = 1123, PAD = 32;
 
   async function init() {
@@ -21,17 +22,7 @@
       const r = await DR.API.getReport(date);
       report = r.report;
       if (!report || !Array.isArray(report.items)) throw new Error("ไม่พบรายงานในวันนี้");
-      const imgList = report.images || [];
-      for (let i = 0; i < imgList.length; i++) {
-        const rec = imgList[i];
-        try {
-          const url = await DR.API.getImage(rec.fileId);
-          const imgEl = await DR.loadImage(url);
-          images.push({ url: url, mime: mimeOf(url), w: imgEl.naturalWidth || 800, h: imgEl.naturalHeight || 600, caption: rec.caption || "" });
-        } catch (e) {
-          DR.toast("โหลดรูป " + (i + 1) + " ไม่สำเร็จ", "error");
-        }
-      }
+
       renderDoc();
       $("#loading-box").classList.add("hidden");
       $("#doc-wrap").classList.remove("hidden");
@@ -41,6 +32,8 @@
 
       $("#btn-image").addEventListener("click", exportImage);
       $("#btn-pdf").addEventListener("click", exportPDF);
+
+      imagesReady = loadImages();
     } catch (e) {
       $("#loading-box").innerHTML =
         '<p class="text-error font-bold mb-2">ไม่พบรายงาน</p>' +
@@ -53,6 +46,17 @@
     const m = /^data:([^;]+);/.exec(dataUrl);
     if (!m) return "PNG";
     return m[1].indexOf("png") >= 0 ? "PNG" : "JPEG";
+  }
+
+  /* Lazy-load the export libraries (only needed on export) */
+  function loadScript(src) {
+    return new Promise((resolve, reject) => {
+      const s = document.createElement("script");
+      s.src = src;
+      s.onload = resolve;
+      s.onerror = () => reject(new Error("โหลดไลบรารีไม่สำเร็จ"));
+      document.head.appendChild(s);
+    });
   }
 
   /* ---------------- A4 document builders (inline styles only) ---------------- */
@@ -100,7 +104,34 @@
   }
 
   function bodyHTML() {
-    return itemsTableHTML() + imagesTitleHTML() + images.map((img) => imageBlockHTML(img, 900)).join("");
+    return itemsTableHTML() +
+      ((report.images || []).length ? imagesTitleHTML() + '<div id="doc-images"></div>' : "");
+  }
+
+  async function loadImages() {
+    const holder = $("#doc-images");
+    if (!holder) return;
+    const imgList = (report.images || []).slice();
+    if (!imgList.length) {
+      holder.innerHTML = '<p style="margin:0;font-size:12px;color:#605850">ไม่มีภาพประกอบ</p>';
+      return;
+    }
+    holder.innerHTML = '<p style="margin:0;font-size:12px;color:#605850">กำลังโหลดรูป ' + imgList.length + " รูป...</p>";
+    await DR.mapLimit(imgList, 4, async (rec) => {
+      const url = await DR.API.getImage(rec.fileId);
+      const imgEl = await DR.loadImage(url);
+      images.push({ url: url, mime: mimeOf(url), w: imgEl.naturalWidth || 800, h: imgEl.naturalHeight || 600, caption: rec.caption || "" });
+      renderImagesSection();
+      requestAnimationFrame(fitDoc);
+    });
+    if (!images.length) holder.innerHTML = '<p style="margin:0;font-size:12px;color:#605850">โหลดรูปไม่สำเร็จ</p>';
+    else renderImagesSection();
+  }
+
+  function renderImagesSection() {
+    const holder = $("#doc-images");
+    if (!holder) return;
+    holder.innerHTML = images.map((img) => imageBlockHTML(img, 900)).join("");
   }
 
   function renderDoc() {
@@ -167,6 +198,8 @@
     const btn = $("#btn-image");
     DR.setLoading(btn, true, "กำลังสร้างรูป...");
     try {
+      await imagesReady;
+      await loadScript("./vendor/html2canvas.min.js");
       await document.fonts.ready;
       const data = buildExportPages();
       const total = data.pages.length;
@@ -216,6 +249,11 @@
     const btn = $("#btn-pdf");
     DR.setLoading(btn, true, "กำลังสร้าง PDF...");
     try {
+      await imagesReady;
+      await Promise.all([
+        loadScript("./vendor/jspdf.umd.min.js"),
+        loadScript("./vendor/anuphan-fonts.js")
+      ]);
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
 

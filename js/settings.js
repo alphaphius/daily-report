@@ -13,6 +13,7 @@
   const modal = {
     mode: "group",       // 'group' | 'site'
     editId: null,
+    lastFocus: null,
     root: $("#modal"),
     title: $("#modal-title"),
     label1: $("#modal-label-1"),
@@ -57,8 +58,8 @@
       "<div><p class='text-body-md font-body-md font-medium text-on-surface'>" + DR.escapeHtml(g.name) + "</p>" +
       "<p class='text-label-md font-label-md text-on-surface-variant'>" + (g.code ? "รหัส: " + DR.escapeHtml(g.code) : "&nbsp;") + "</p></div>" +
       '<div class="flex gap-1">' +
-      '<button data-g-act="edit" data-i="' + i + '" class="p-2 text-surface-tint hover:bg-primary-fixed rounded-full transition-colors" title="แก้ไข"><span class="material-symbols-outlined">edit</span></button>' +
-      '<button data-g-act="del" data-i="' + i + '" class="p-2 text-error hover:bg-error-container rounded-full transition-colors" title="ลบ"><span class="material-symbols-outlined">delete</span></button>' +
+      '<button type="button" data-g-act="edit" data-i="' + i + '" aria-label="แก้ไขกลุ่มงาน ' + DR.escapeHtml(g.name) + '" class="w-11 h-11 inline-flex items-center justify-center text-surface-tint hover:bg-primary-fixed rounded-full transition-colors" title="แก้ไข"><span class="material-symbols-outlined" aria-hidden="true">edit</span></button>' +
+      '<button type="button" data-g-act="del" data-i="' + i + '" aria-label="ลบกลุ่มงาน ' + DR.escapeHtml(g.name) + '" class="w-11 h-11 inline-flex items-center justify-center text-error hover:bg-error-container rounded-full transition-colors" title="ลบ"><span class="material-symbols-outlined" aria-hidden="true">delete</span></button>' +
       "</div></li>").join("");
   }
 
@@ -73,8 +74,8 @@
       "<div><p class='text-body-md font-body-md font-medium text-on-surface'>" + DR.escapeHtml(s.name) + "</p>" +
       "<p class='text-label-md font-label-md text-on-surface-variant'>" + (s.address ? DR.escapeHtml(s.address) : "&nbsp;") + "</p></div>" +
       '<div class="flex gap-1">' +
-      '<button data-s-act="edit" data-i="' + i + '" class="p-2 text-surface-tint hover:bg-primary-fixed rounded-full transition-colors" title="แก้ไข"><span class="material-symbols-outlined">edit</span></button>' +
-      '<button data-s-act="del" data-i="' + i + '" class="p-2 text-error hover:bg-error-container rounded-full transition-colors" title="ลบ"><span class="material-symbols-outlined">delete</span></button>' +
+      '<button type="button" data-s-act="edit" data-i="' + i + '" aria-label="แก้ไขสถานที่ ' + DR.escapeHtml(s.name) + '" class="w-11 h-11 inline-flex items-center justify-center text-surface-tint hover:bg-primary-fixed rounded-full transition-colors" title="แก้ไข"><span class="material-symbols-outlined" aria-hidden="true">edit</span></button>' +
+      '<button type="button" data-s-act="del" data-i="' + i + '" aria-label="ลบสถานที่ ' + DR.escapeHtml(s.name) + '" class="w-11 h-11 inline-flex items-center justify-center text-error hover:bg-error-container rounded-full transition-colors" title="ลบ"><span class="material-symbols-outlined" aria-hidden="true">delete</span></button>' +
       "</div></li>").join("");
   }
 
@@ -84,9 +85,9 @@
       chips.innerHTML = '<span class="text-label-md text-on-surface-variant">ยังไม่มีเวลา ตัวอย่าง: 17:00</span>';
     } else {
       chips.innerHTML = state.endTimes.map((t, i) =>
-        '<span class="inline-flex items-center gap-2 bg-surface-container rounded-full pl-4 pr-2 py-1.5 border border-outline-variant text-sm">' +
+        '<span class="inline-flex items-center gap-2 bg-surface-container rounded-full pl-4 pr-1 py-1 border border-outline-variant text-sm">' +
         DR.escapeHtml(t) +
-        '<button data-t-del="' + i + '" class="text-error hover:bg-error-container rounded-full p-1"><span class="material-symbols-outlined text-sm">close</span></button></span>').join("");
+        '<button type="button" data-t-del="' + i + '" aria-label="ลบเวลา ' + DR.escapeHtml(t) + '" class="text-error hover:bg-error-container rounded-full w-9 h-9 inline-flex items-center justify-center"><span class="material-symbols-outlined text-lg" aria-hidden="true">close</span></button></span>').join("");
     }
     const sel = $("#default-time");
     sel.innerHTML = state.endTimes.map((t) => '<option value="' + DR.escapeHtml(t) + '"' + (t === state.defaultEndTime ? " selected" : "") + ">" + DR.escapeHtml(t) + "</option>").join("");
@@ -145,6 +146,9 @@
     modal.cancel.addEventListener("click", closeModal);
     modal.root.addEventListener("click", (e) => { if (e.target === modal.root) closeModal(); });
     modal.ok.addEventListener("click", submitModal);
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !modal.root.classList.contains("hidden")) closeModal();
+    });
   }
 
   function addTime() {
@@ -176,6 +180,7 @@
       modal.field2.value = item ? item.address : "";
     }
     modal.root.classList.remove("hidden");
+    modal.lastFocus = document.activeElement;
     setTimeout(() => modal.field1.focus(), 50);
   }
 
@@ -183,6 +188,7 @@
     modal.root.classList.add("hidden");
     modal.field1.value = "";
     modal.field2.value = "";
+    if (modal.lastFocus && modal.lastFocus.focus) modal.lastFocus.focus();
   }
 
   function submitModal() {

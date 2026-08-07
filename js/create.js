@@ -93,16 +93,12 @@
   }
 
   async function loadImageDataURLs() {
-    for (let i = 0; i < state.images.length; i++) {
-      const img = state.images[i];
-      if (img.dataUrl) continue;
-      try {
-        img.dataUrl = await DR.API.getImage(img.fileId);
-        updateImgCard(i);
-      } catch (e) {
-        DR.toast("ไม่สามารถโหลดรูป " + (i + 1) + " ได้", "error");
-      }
-    }
+    const pending = state.images.filter((img) => !img.dataUrl);
+    await DR.mapLimit(pending, 4, async (img, k) => {
+      img.dataUrl = await DR.API.getImage(img.fileId);
+      const i = state.images.indexOf(img);
+      if (i >= 0) updateImgCard(i);
+    });
   }
 
   /* ---------- items ---------- */
@@ -156,8 +152,8 @@
         '<td class="p-4 text-on-surface">' + DR.escapeHtml(it.detail) + "</td>" +
         '<td class="p-4 text-on-surface-variant">' + (it.note ? DR.escapeHtml(it.note) : "—") + "</td>" +
         '<td class="p-4 text-center whitespace-nowrap">' +
-        '<button data-act="edit" data-i="' + i + '" class="p-2 text-outline hover:text-primary transition-colors" title="แก้ไข"><span class="material-symbols-outlined text-sm">edit</span></button>' +
-        '<button data-act="del" data-i="' + i + '" class="p-2 text-outline hover:text-error transition-colors" title="ลบ"><span class="material-symbols-outlined text-sm">delete</span></button>' +
+        '<button type="button" data-act="edit" data-i="' + i + '" aria-label="แก้ไขรายการ ' + (i + 1) + '" class="w-11 h-11 align-middle text-outline hover:text-primary transition-colors" title="แก้ไข"><span class="material-symbols-outlined text-lg" aria-hidden="true">edit</span></button>' +
+        '<button type="button" data-act="del" data-i="' + i + '" aria-label="ลบรายการ ' + (i + 1) + '" class="w-11 h-11 align-middle text-outline hover:text-error transition-colors" title="ลบ"><span class="material-symbols-outlined text-lg" aria-hidden="true">delete</span></button>' +
         "</td></tr>").join("");
       $$("[data-act]", tbody).forEach((btn) => {
         btn.addEventListener("click", () => {
@@ -213,7 +209,7 @@
       '<div id="img-card-' + i + '" class="bg-surface-container rounded-lg border border-outline-variant overflow-hidden">' +
       '<div class="img-thumb aspect-square bg-surface-container w-full relative group">' +
       (img.dataUrl ? '<div class="bg-cover bg-center w-full h-full" style="background-image:url(' + img.dataUrl + ')"></div>' : '<div class="spinner absolute inset-0 m-auto"></div>') +
-      '<button data-img-remove="' + i + '" class="absolute top-2 right-2 p-1 bg-white/90 rounded-full shadow-sm text-error"><span class="material-symbols-outlined text-sm">close</span></button>' +
+      '<button type="button" data-img-remove="' + i + '" aria-label="ลบรูป ' + (i + 1) + '" class="absolute top-2 right-2 w-11 h-11 flex items-center justify-center bg-white/90 rounded-full shadow-sm text-error"><span class="material-symbols-outlined text-lg" aria-hidden="true">close</span></button>' +
       "</div>" +
       '<input data-img-caption="' + i + '" type="text" value="' + DR.escapeHtml(img.caption || "") + '" placeholder="คำอธิบายรูป (ถ้ามี)" class="w-full px-3 py-2 text-sm bg-surface-container-lowest border-0 border-t border-outline-variant focus:outline-none focus:ring-0" />' +
       "</div>").join("");

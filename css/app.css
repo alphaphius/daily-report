@@ -178,3 +178,25 @@ body {
 @keyframes spin { to { transform: rotate(360deg); } }
 
 .btn-loading { pointer-events: none; opacity: 0.7; }
+
+/* Accessible focus ring */
+:focus-visible {
+  outline: 2px solid #c2652a;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+:focus:not(:focus-visible) { outline: none; }
+
+/* Reduced motion: keep the spinner as loading feedback, kill the rest */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .spinner {
+    animation-duration: 0.7s !important;
+    animation-iteration-count: infinite !important;
+  }
+}

@@ -53,10 +53,12 @@
     if (!wrap) {
       wrap = document.createElement("div");
       wrap.className = "toast-wrap";
+      wrap.setAttribute("aria-live", "polite");
       document.body.appendChild(wrap);
     }
     const el = document.createElement("div");
     el.className = "toast" + (type ? " " + type : "");
+    el.setAttribute("role", "status");
     el.textContent = message;
     wrap.appendChild(el);
     setTimeout(() => {
@@ -193,6 +195,25 @@
     }
   }
 
+  /* ---------- Concurrency-limited async map (for image loading) ---------- */
+  async function mapLimit(items, limit, fn) {
+    const results = new Array(items.length);
+    let idx = 0;
+    async function worker() {
+      while (idx < items.length) {
+        const i = idx++;
+        try {
+          results[i] = await fn(items[i], i);
+        } catch (e) {
+          results[i] = undefined;
+        }
+      }
+    }
+    const n = Math.max(1, Math.min(limit, items.length));
+    await Promise.all(Array.from({ length: n }, worker));
+    return results;
+  }
+
   function registerSW() {
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("./sw.js").catch(function () {});
@@ -229,6 +250,7 @@
     download: download,
     escapeHtml: escapeHtml,
     setLoading: setLoading,
+    mapLimit: mapLimit,
     registerSW: registerSW
   };
 })();
