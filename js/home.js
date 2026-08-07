@@ -31,12 +31,16 @@
   }
 
   async function loadCalendar() {
+    const li = $("#cal-loading");
+    if (li) li.classList.remove("hidden");
     try {
       const r = await DR.API.getCalendar(viewYear, viewMonth + 1);
       reportDates = new Set((r.dates || []).map((d) => d.date || d));
       renderCalendar();
     } catch (e) {
       DR.toast("ไม่สามารถโหลดปฏิทินได้: " + e.message, "error");
+    } finally {
+      if (li) li.classList.add("hidden");
     }
   }
 
@@ -101,7 +105,7 @@
   async function loadSummary() {
     $("#sum-title").textContent = "รายงานวันที่ " + DR.fmtThaiLong(selectedDate);
     const body = $("#sum-body");
-    body.innerHTML = '<div class="spinner"></div>';
+    body.innerHTML = '<div class="spinner"></div><p class="mt-3 text-label-md font-label-md text-on-surface-variant">กำลังโหลดข้อมูล...</p>';
     try {
       const r = await DR.API.getReport(selectedDate);
       summaryReport = r.report || null;

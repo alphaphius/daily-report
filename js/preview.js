@@ -153,10 +153,7 @@
     let bodyH = PAGE_H - headerH - labelH;
     if (bodyH < 120) bodyH = 120;
 
-    const blocks = [];
-    blocks.push({ html: itemsTableHTML(), kind: "table" });
-    if (images.length) blocks.push({ html: imagesTitleHTML(), kind: "title" });
-    images.forEach((img) => blocks.push({ html: imageBlockHTML(img, bodyH - 14), kind: "image" }));
+    const blocks = [{ html: itemsTableHTML(), kind: "table" }];
 
     // paginate with cumulative measurement (margin-aware)
     const pages = [];
@@ -248,14 +245,15 @@
         if (y + h > H - M) newPage(false);
       }
       function metaPair(label, value, lineY) {
-        doc.setFont("Anuphan", "normal");
-        doc.setFontSize(10);
-        doc.setTextColor.apply(doc, GRAY);
-        const lw = doc.getTextWidth(label);
-        doc.text(label, W - M, lineY, { align: "right" });
+        const v = String(value || "—");
         doc.setFont("Anuphan", "bold");
+        doc.setFontSize(10);
         doc.setTextColor.apply(doc, INK);
-        doc.text(String(value || "—"), W - M - lw, lineY, { align: "right" });
+        const vw = doc.getTextWidth(v);
+        doc.text(v, W - M, lineY, { align: "right" });
+        doc.setFont("Anuphan", "normal");
+        doc.setTextColor.apply(doc, GRAY);
+        doc.text(label, W - M - vw - 2, lineY, { align: "right" });
       }
 
       /* header (re-drawn on every page) */
@@ -345,29 +343,21 @@
         doc.setTextColor.apply(doc, GRAY);
         doc.text("ไม่มีภาพประกอบ", M, y);
       } else {
-        const gap = 6, cw = (CW - gap) / 2, capPad = 2;
-        for (let i = 0; i < images.length; i += 2) {
-          const a = images[i], b = images[i + 1];
-          const aH = Math.min(cw * (a.h / a.w), 70);
-          const bH = b ? Math.min(cw * (b.h / b.w), 70) : 0;
-          const capA = a.caption ? doc.splitTextToSize(a.caption, cw - 4) : [];
-          const capB = b && b.caption ? doc.splitTextToSize(b.caption, cw - 4) : [];
-          const capHA = capA.length ? capA.length * 3.6 + 2 : 0;
-          const capHB = capB.length ? capB.length * 3.6 + 2 : 0;
-          const rowH = Math.max(aH, bH) + Math.max(capHA, capHB);
-          ensureY(rowH);
-          try { doc.addImage(a.url, mimeOf(a.url), M, y, cw, aH); } catch (e) { /* skip bad image */ }
-          if (b) { try { doc.addImage(b.url, mimeOf(b.url), M + cw + gap, y, cw, bH); } catch (e) {} }
-          if (capA.length) {
+        const capPad = 2;
+        for (const img of images) {
+          const cap = img.caption ? doc.splitTextToSize(img.caption, CW - 4) : [];
+          const capH = cap.length ? cap.length * 3.6 + 2 : 0;
+          const scale = Math.min(1, CW / img.w, (H - M - 2) / img.h);
+          const iw = Math.max(10, img.w * scale), ih = Math.max(10, img.h * scale);
+          ensureY(ih + capH);
+          try { doc.addImage(img.url, mimeOf(img.url), M, y, iw, ih); } catch (e) { /* skip bad image */ }
+          if (cap.length) {
             doc.setFont("Anuphan", "normal");
             doc.setFontSize(8);
             doc.setTextColor.apply(doc, GRAY);
-            doc.text(capA, M + capPad, y + aH + 3.5);
+            doc.text(cap, M + capPad, y + ih + 3.5);
           }
-          if (b && capB.length) {
-            doc.text(capB, M + cw + gap + capPad, y + bH + 3.5);
-          }
-          y += rowH;
+          y += ih + capH;
         }
       }
 
