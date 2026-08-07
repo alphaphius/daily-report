@@ -10,7 +10,7 @@
   <link rel="manifest" href="./manifest.json" />
   <link rel="icon" type="image/png" href="./icons/icon-192.png" />
   <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-  <title>หน้าหลัก - DailyReport</title>
+  <title>ค้นหารายงาน - DailyReport</title>
 
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <script>
@@ -42,73 +42,42 @@
   </header>
 
   <main class="px-margin-mobile md:px-margin-desktop py-stack-lg max-w-4xl mx-auto space-y-stack-lg">
-    <!-- Header -->
     <section class="flex flex-col gap-stack-sm">
-      <h2 class="text-headline-lg-mobile md:text-headline-lg font-headline-lg-mobile md:font-headline-lg">หน้าหลัก</h2>
-      <p class="text-body-md font-body-md text-on-surface-variant">เลือกวันที่เพื่อเริ่มรายงาน</p>
+      <h2 class="text-headline-lg-mobile md:text-headline-lg font-headline-lg-mobile md:font-headline-lg">ค้นหารายงาน</h2>
+      <p class="text-body-md font-body-md text-on-surface-variant">ค้นหาจากรายการ, หมายเหตุ, กลุ่มงาน หรือไซต์งาน</p>
     </section>
 
-    <!-- Calendar Card -->
-    <section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md flex flex-col gap-stack-md shadow-sm">
-      <div class="flex justify-between items-center">
-        <div class="flex items-center gap-3">
-          <h3 id="cal-title" class="text-headline-md font-headline-md text-on-surface">—</h3>
-          <span id="cal-loading" class="spinner spinner-sm hidden"></span>
-        </div>
-        <div class="flex gap-2">
-          <button id="cal-prev" class="p-2 rounded-full hover:bg-surface-container transition-colors"><span class="material-symbols-outlined text-on-surface-variant">chevron_left</span></button>
-          <button id="cal-next" class="p-2 rounded-full hover:bg-surface-container transition-colors"><span class="material-symbols-outlined text-on-surface-variant">chevron_right</span></button>
-        </div>
-      </div>
-      <div id="cal-grid" class="grid grid-cols-7 gap-1 text-center"></div>
-    </section>
-
-    <!-- Summary Card -->
-    <section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-lg shadow-sm">
-      <h3 class="text-headline-md font-headline-md text-on-surface flex items-center gap-2 mb-stack-md">
-        <span class="material-symbols-outlined text-primary">today</span>
-        <span id="sum-title">รายงานวันที่ —</span>
-      </h3>
-      <div id="sum-body" class="flex flex-col items-center justify-center py-stack-lg text-center bg-surface-container-low rounded-lg border border-dashed border-outline-variant">
-        <div class="spinner"></div>
-      </div>
-    </section>
-
-    <!-- Export CSV Card -->
+    <!-- Search Box -->
     <section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md shadow-sm">
-      <h3 class="text-headline-md font-headline-md text-on-surface flex items-center gap-2 mb-stack-md">
-        <span class="material-symbols-outlined text-primary">file_download</span>
-        <span>ส่งออก CSV</span>
-      </h3>
-      <p class="text-body-md font-body-md text-on-surface-variant mb-stack-md">เลือกช่วงวันที่เพื่อดาวน์โหลดข้อมูลทั้งหมด</p>
-      <div class="flex flex-col sm:flex-row gap-3">
-        <label class="flex flex-col gap-1 flex-1">
-          <span class="text-label-md font-label-md text-on-surface-variant">จากวันที่</span>
-          <input id="csv-start" type="date" class="px-4 py-3 rounded-full border border-outline-variant bg-surface text-on-background outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
-        </label>
-        <label class="flex flex-col gap-1 flex-1">
-          <span class="text-label-md font-label-md text-on-surface-variant">ถึงวันที่</span>
-          <input id="csv-end" type="date" class="px-4 py-3 rounded-full border border-outline-variant bg-surface text-on-background outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
-        </label>
-      </div>
-      <div class="mt-stack-md flex justify-end">
-        <button id="csv-btn" class="flex items-center justify-center gap-2 px-6 py-3 bg-primary text-on-primary rounded-full hover:bg-primary-container transition-colors shadow-sm text-label-md font-label-md">
-          <span class="material-symbols-outlined">download</span>
-          ส่งออก CSV
+      <form id="search-form" class="flex flex-col sm:flex-row gap-3">
+        <input id="search-input" type="search" placeholder="เช่น ตู้, ตรวจงาน, ซับกระจาย..." autocomplete="off"
+          class="flex-1 px-4 py-3 rounded-full border border-outline-variant bg-surface text-on-background placeholder:text-on-surface-variant outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 text-body-md font-body-md" />
+        <button id="search-btn" type="submit"
+          class="flex items-center justify-center gap-2 px-6 py-3 bg-primary text-on-primary rounded-full hover:bg-primary-container transition-colors shadow-sm text-label-md font-label-md">
+          <span class="material-symbols-outlined">search</span>
+          ค้นหา
         </button>
+      </form>
+    </section>
+
+    <!-- Results (Deck) -->
+    <section id="results-wrap">
+      <div id="results-hint" class="text-center text-body-md font-body-md text-on-surface-variant py-10">
+        พิมพ์คำค้นหาเพื่อดูรายงานที่เกี่ยวข้อง
       </div>
+      <div id="results" class="flex flex-col gap-4"></div>
     </section>
   </main>
 
   <!-- BottomNavBar -->
   <nav class="bottom-nav md:hidden">
     <div class="bottom-nav-inner">
-      <a href="index.html" class="active">
-        <span class="material-symbols-outlined filled">dashboard</span>
+      <a href="index.html">
+        <span class="material-symbols-outlined">dashboard</span>
         <span class="nav-label">หน้าหลัก</span>
       </a>
-      <a href="search.html">
-        <span class="material-symbols-outlined">search</span>
+      <a href="search.html" class="active">
+        <span class="material-symbols-outlined filled">search</span>
         <span class="nav-label">ค้นหา</span>
       </a>
       <a href="create.html">
@@ -124,6 +93,6 @@
 
   <script src="./config.js"></script>
   <script src="./js/app.js"></script>
-  <script src="./js/home.js"></script>
+  <script src="./js/search.js"></script>
 </body>
 </html>

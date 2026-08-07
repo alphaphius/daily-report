@@ -1,10 +1,11 @@
-const CACHE_NAME = "dailyreport-v5";
+const CACHE_NAME = "dailyreport-v6";
 const ASSETS = [
   "./",
   "./index.html",
   "./create.html",
   "./preview.html",
   "./settings.html",
+  "./search.html",
   "./manifest.json",
   "./config.js",
   "./js/app.js",
@@ -12,6 +13,7 @@ const ASSETS = [
   "./js/create.js",
   "./js/preview.js",
   "./js/settings.js",
+  "./js/search.js",
   "./css/app.css",
   "./vendor/html2canvas.min.js",
   "./vendor/jspdf.umd.min.js",

@@ -63,6 +63,8 @@ function route(b) {
     case "saveSettings": saveSettings(b.settings); return { ok: true };
     case "getCalendar":  return { dates: getCalendar(b.year, b.month) };
     case "getReport":    return { report: getReport(b.date) };
+    case "searchReports":  return { reports: searchReports(b.query) };
+    case "getReportsByRange": return { reports: getReportsByRange(b.start, b.end) };
     case "saveReport":   return saveReport(b.report);
     case "deleteReport": deleteReport(b.date); return { ok: true };
     case "getImage":     return getImage(b.id);
@@ -199,6 +201,58 @@ function findRow(sh, date) {
     if (normDate(vals[i][0]) === String(date)) return i + 1;
   }
   return null;
+}
+
+/*****************************************************************
+ * SEARCH + RANGE (อ่านทั้งหมดจากชีต Reports)
+ *****************************************************************/
+function readAllReports() {
+  var sh = getSpreadsheet().getSheetByName("Reports");
+  var vals = sh.getDataRange().getValues();
+  var out = [];
+  for (var i = 1; i < vals.length; i++) {
+    var date = normDate(vals[i][0]);
+    var rep = null;
+    try { rep = JSON.parse(vals[i][1]); } catch (e) {}
+    if (!rep) continue;
+    out.push({
+      date: date,
+      workGroup: rep.workGroup || "",
+      site: rep.site || "",
+      endTime: rep.endTime || "",
+      items: rep.items || []
+    });
+  }
+  out.sort(function (a, b) { return a.date < b.date ? 1 : -1; });
+  return out;
+}
+
+function searchReports(query) {
+  var q = String(query || "").toLowerCase().trim();
+  if (!q) return [];
+  var out = [];
+  readAllReports().forEach(function (rep) {
+    var hay = [rep.workGroup, rep.site, rep.endTime, rep.date];
+    rep.items.forEach(function (it) {
+      hay.push(it.detail || "");
+      hay.push(it.note || "");
+    });
+    if (hay.join(" ").toLowerCase().indexOf(q) >= 0) {
+      out.push(rep);
+    }
+  });
+  return out.slice(0, 100);
+}
+
+function getReportsByRange(start, end) {
+  var s = String(start || ""), e = String(end || "");
+  var out = readAllReports().filter(function (rep) {
+    if (!rep.date) return false;
+    if (s && rep.date < s) return false;
+    if (e && rep.date > e) return false;
+    return true;
+  });
+  return out;
 }
 
 function saveReport(report) {

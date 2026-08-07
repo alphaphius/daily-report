@@ -28,6 +28,48 @@
       renderCalendar();
       loadCalendar();
     });
+
+    const now2 = new Date();
+    $("#csv-start").value = now2.getFullYear() + "-" + DR.pad2(now2.getMonth() + 1) + "-01";
+    $("#csv-end").value = DR.todayStr();
+    $("#csv-btn").addEventListener("click", exportCSV);
+  }
+
+  function exportCSV() {
+    const start = $("#csv-start").value;
+    const end = $("#csv-end").value;
+    if (!start || !end) { DR.toast("เลือกช่วงวันที่ก่อนส่งออก", "error"); return; }
+    if (start > end) { DR.toast("วันที่เริ่มต้องไม่เกินวันที่สิ้นสุด", "error"); return; }
+    const btn = $("#csv-btn");
+    DR.setLoading(btn, true, "กำลังส่งออก...");
+    DR.API.getReportsByRange(start, end)
+      .then((r) => {
+        const reports = r.reports || [];
+        if (!reports.length) { DR.toast("ไม่มีข้อมูลในช่วงวันที่เลือก", "error"); return; }
+        const rows = countRows(reports);
+        const csv = buildCSV(reports);
+        DR.download("data:text/csv;charset=utf-8," + encodeURIComponent(csv), "DailyReport_" + start + "_" + end + ".csv");
+        DR.toast("ส่งออก CSV แล้ว (" + reports.length + " รายงาน, " + rows + " รายการ)", "success");
+      })
+      .catch((e) => DR.toast("ส่งออก CSV ไม่สำเร็จ: " + e.message, "error"))
+      .finally(() => DR.setLoading(btn, false));
+  }
+
+  function countRows(reports) {
+    let n = 0;
+    reports.forEach((r) => { n += (r.items || []).length; });
+    return n;
+  }
+
+  function buildCSV(reports) {
+    const rows = [["วันที่", "กลุ่มงาน", "ไซต์งาน", "เวลาเลิกงาน", "ลำดับ", "รายละเอียด", "หมายเหตุ"]];
+    reports.forEach((r) => {
+      (r.items || []).forEach((it, i) => {
+        rows.push([r.date, r.workGroup, r.site, r.endTime, String(i + 1), it.detail || "", it.note || ""]);
+      });
+    });
+    const esc = (v) => '"' + String(v == null ? "" : v).replace(/"/g, '""') + '"';
+    return "\uFEFF" + rows.map((row) => row.map(esc).join(",")).join("\r\n");
   }
 
   async function loadCalendar() {

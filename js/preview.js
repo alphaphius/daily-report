@@ -57,29 +57,18 @@
 
   /* ---------------- A4 document builders (inline styles only) ---------------- */
 
-  function metaRow(l1, v1, l2, v2) {
-    return '<div style="display:flex;justify-content:flex-end;gap:8px;line-height:1.5">' +
-      '<span style="color:#605850">' + DR.escapeHtml(l1) + "&nbsp;:</span>" +
-      '<span style="font-weight:700;max-width:160px">' + DR.escapeHtml(String(v1 == null || v1 === "" ? "—" : v1)) + "</span>" +
-      '<span style="width:12px"></span>' +
-      '<span style="color:#605850">' + DR.escapeHtml(l2) + "&nbsp;:</span>" +
-      '<span style="font-weight:700;max-width:160px">' + DR.escapeHtml(String(v2 == null || v2 === "" ? "—" : v2)) + "</span>" +
-      "</div>";
-  }
-
   function headerHTML() {
     const C = DR.CONFIG;
-    return '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:24px">' +
-      '<div style="display:flex;align-items:center;gap:16px;min-width:0">' +
+    const field = (l, v) =>
+      '<span style="white-space:nowrap"><span style="color:#605850">' + DR.escapeHtml(l) + "&nbsp;:</span> " +
+      '<span style="font-weight:700">' + DR.escapeHtml(String(v == null || v === "" ? "—" : v)) + "</span></span>";
+    return '<div style="display:flex;align-items:center;gap:16px">' +
       '<img src="' + logoDataURL + '" style="width:64px;height:64px;border-radius:4px;object-fit:contain;flex-shrink:0" alt="logo" />' +
-      '<div style="min-width:0">' +
-      '<h2 style="margin:0;font-size:24px;line-height:1.3;font-weight:700;color:#c2652a">' + DR.escapeHtml(C.REPORT_TITLE) + "</h2>" +
-      '<p style="margin:4px 0 0;font-size:13px;color:#605850">' + DR.escapeHtml(report.site || "") + "</p>" +
-      "</div></div>" +
-      '<div style="flex-shrink:0;font-size:12px;text-align:right">' +
-      metaRow("วันที่", DR.fmtThai(report.date), "ไซต์", report.site || "—") +
-      metaRow("กลุ่มงาน", report.workGroup || "—", "เวลาเลิกงาน", report.endTime || "—") +
-      "</div></div>" +
+      '<h2 style="margin:0;font-size:24px;line-height:1.3;font-weight:700;color:#c2652a">' + DR.escapeHtml(C.REPORT_TITLE) + "</h2></div>" +
+      '<div style="margin-top:16px;display:flex;flex-direction:column;gap:6px;font-size:12px">' +
+      '<div style="display:flex;gap:40px;flex-wrap:wrap">' + field("วันที่", DR.fmtThai(report.date)) + field("ไซต์", report.site || "—") + "</div>" +
+      '<div style="display:flex;gap:40px;flex-wrap:wrap">' + field("กลุ่มงาน", report.workGroup || "—") + field("เวลาเลิกงาน", report.endTime || "—") + "</div>" +
+      "</div>" +
       '<div style="border-bottom:1px solid #d8d0c8;margin-top:20px"></div>';
   }
 
@@ -244,16 +233,17 @@
       function ensureY(h) {
         if (y + h > H - M) newPage(false);
       }
-      function metaPair(label, value, lineY) {
+      function drawMetaField(label, value, x, lineY) {
         const v = String(value || "—");
-        doc.setFont("Anuphan", "bold");
-        doc.setFontSize(10);
-        doc.setTextColor.apply(doc, INK);
-        const vw = doc.getTextWidth(v);
-        doc.text(v, W - M, lineY, { align: "right" });
         doc.setFont("Anuphan", "normal");
+        doc.setFontSize(10);
         doc.setTextColor.apply(doc, GRAY);
-        doc.text(label, W - M - vw - 2, lineY, { align: "right" });
+        doc.text(label, x, lineY);
+        const lw = doc.getTextWidth(label);
+        doc.setFont("Anuphan", "bold");
+        doc.setTextColor.apply(doc, INK);
+        doc.text(v, x + lw, lineY);
+        return x + lw + doc.getTextWidth(v) + 14;
       }
 
       /* header (re-drawn on every page) */
@@ -265,15 +255,12 @@
         doc.setFontSize(15);
         doc.setTextColor.apply(doc, PRIMARY);
         doc.text(DR.CONFIG.REPORT_TITLE, M + 18, y + 4);
-        doc.setFont("Anuphan", "normal");
-        doc.setFontSize(10);
-        doc.setTextColor.apply(doc, GRAY);
-        doc.text(String(report.site || ""), M + 18, y + 9);
-        let my = y + 1;
-        metaPair("วันที่:", DR.fmtThai(report.date), my); my += 5.5;
-        metaPair("ไซต์:", report.site, my); my += 5.5;
-        metaPair("กลุ่มงาน:", report.workGroup, my); my += 5.5;
-        metaPair("เวลาเลิกงาน:", report.endTime, my);
+        var mx1 = M + 18;
+        mx1 = drawMetaField("วันที่:", DR.fmtThai(report.date), mx1, y + 14);
+        drawMetaField("ไซต์:", report.site, mx1, y + 14);
+        var mx2 = M + 18;
+        mx2 = drawMetaField("กลุ่มงาน:", report.workGroup, mx2, y + 19.5);
+        drawMetaField("เวลาเลิกงาน:", report.endTime, mx2, y + 19.5);
         y += 22;
         doc.setDrawColor.apply(doc, LINE);
         doc.setLineWidth(0.3);

@@ -113,6 +113,8 @@
     saveSettings(settings) { return this.call("saveSettings", { settings: settings }); },
     getCalendar(year, month) { return this.call("getCalendar", { year: year, month: month }); },
     getReport(date) { return this.call("getReport", { date: date }); },
+    searchReports(query) { return this.call("searchReports", { query: query }); },
+    getReportsByRange(start, end) { return this.call("getReportsByRange", { start: start, end: end }); },
     saveReport(report) { return this.call("saveReport", { report: report }); },
     deleteReport(date) { return this.call("deleteReport", { date: date }); },
 
